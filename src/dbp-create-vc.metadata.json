@@ -1,0 +1,18 @@
+{
+  "element": "dbp-create-vc",
+  "module_src": "dbp-create-vc.js",
+  "routing_name": "create-vc",
+  "name": {
+    "de": "Ein Diplom exportieren",
+    "en": "Export a diploma"
+  },
+  "short_name": {
+    "de": "Diplom exportieren",
+    "en": "Export diploma"
+  },
+  "description": {
+    "de": "Exportieren Sie ein Diplom dieser Universität.",
+    "en": "Export a diploma of this university."
+  },
+  "subscribe": "lang,entry-point-url,auth,html-overrides"
+}
