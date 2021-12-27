@@ -3,16 +3,16 @@
   "module_src": "dbp-create-vc.js",
   "routing_name": "create-vc",
   "name": {
-    "de": "Ein Diplom exportieren",
-    "en": "Export a diploma"
+    "de": "Diplome exportieren",
+    "en": "Export diplomas"
   },
   "short_name": {
-    "de": "Diplom exportieren",
-    "en": "Export diploma"
+    "de": "Diplome exportieren",
+    "en": "Export diplomas"
   },
   "description": {
-    "de": "Exportieren Sie ein Diplom dieser Universität.",
-    "en": "Export a diploma of this university."
+    "de": "Export der Diplome angemeldeter Benutzer*innen.",
+    "en": "Export diplomas for logged in users."
   },
-  "subscribe": "lang,entry-point-url,auth,html-overrides"
+  "subscribe": "lang,entry-point-url,auth,html-overrides,preselected-option"
 }

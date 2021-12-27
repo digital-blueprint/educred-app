@@ -78,7 +78,6 @@ export default (async () => {
     return {
         input: (appEnv != 'test') ? [
                 'src/' + pkg.internalName + '.js',
-                'src/dbp-list-diplomas.js',
                 'src/dbp-create-vc.js',
                 'src/dbp-verify-vc.js',
 
