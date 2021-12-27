@@ -1,0 +1,18 @@
+{
+  "element": "dbp-verify-vc",
+  "module_src": "dbp-verify-vc.js",
+  "routing_name": "verify-vc",
+  "name": {
+    "de": "Ein Diplom importieren",
+    "en": "Import a diploma"
+  },
+  "short_name": {
+    "de": "Diplom importieren",
+    "en": "Import diploma"
+  },
+  "description": {
+    "de": "Importieren Sie ein Diplom einer anderen Universität.",
+    "en": "Import a diploma of another university."
+  },
+  "subscribe": "lang,entry-point-url,auth,html-overrides"
+}

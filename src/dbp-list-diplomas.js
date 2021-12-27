@@ -25,10 +25,6 @@ class DbpListDiplomas extends ScopedElementsMixin(DBPEducredLitElement) {
         this.locationName = 'Diploma';
         this.currentDiploma = {};
         this.loadingDiplomas = true;
-        this.setTimeoutIsSet = false;
-        this.timer = '';
-
-        this.boundUpdateTicketwrapper = this.updateTicketWrapper.bind(this);
     }
 
     static get scopedElements() {
@@ -53,17 +49,6 @@ class DbpListDiplomas extends ScopedElementsMixin(DBPEducredLitElement) {
         };
     }
 
-    disconnectedCallback() {
-        clearTimeout(this.timer);
-        window.removeEventListener('focus', this.boundUpdateTicketwrapper);
-        super.disconnectedCallback();
-    }
-
-    connectedCallback() {
-        super.connectedCallback();
-        window.addEventListener('focus', this.boundUpdateTicketwrapper);
-    }
-
     update(changedProperties) {
         changedProperties.forEach((oldValue, propName) => {
             switch (propName) {
@@ -77,6 +62,7 @@ class DbpListDiplomas extends ScopedElementsMixin(DBPEducredLitElement) {
 
     loginCallback() {
         super.loginCallback();
+        debugger
         this.getListOfDiplomas();
     }
 
@@ -144,6 +130,7 @@ class DbpListDiplomas extends ScopedElementsMixin(DBPEducredLitElement) {
 
         let response = await this.getAllDiplomasRequest();
         await this.checkDiplomasRequest(response);
+        console.dir(this.diplomas);
     }
 
     /**
@@ -159,9 +146,10 @@ class DbpListDiplomas extends ScopedElementsMixin(DBPEducredLitElement) {
             this.diplomas = this.parseDiplomas(responseBody);
         } else {
             // else it failed, but we want to fail soft
-            console.log("Update diplomas failed");
+            console.log("Loading diplomas has failed");
         }
         this.loadingDiplomas = false;
+        this.loading = false;
     }
 
     /**
@@ -406,6 +394,10 @@ class DbpListDiplomas extends ScopedElementsMixin(DBPEducredLitElement) {
 
 
     render() {
+        if (this.loadingDiplomas) {
+            this.getListOfDiplomas();
+        }
+
         const i18n = this._i18n;
 
         const ticketTitle = html`
@@ -415,14 +407,14 @@ class DbpListDiplomas extends ScopedElementsMixin(DBPEducredLitElement) {
 
 
         const loading = html`
-            <span class="control ${classMap({hidden: !this.loading && !this.loadingTickets})}">
+            <span class="control ${classMap({hidden: !this.loading})}">
                             <span class="loading">
                                 <dbp-mini-spinner text=${i18n.t('loading-message')}></dbp-mini-spinner>
                             </span>
                         </span>
         `;
 
-        const noDiplomas = this.diplomas.count() === 0 ? html`no diplomas` : '';
+        const noDiplomas = this.diplomas.length === 0 ? html`<p>sorry, you have no diplomas jet</p>` : '';
 
         return html`
 
@@ -430,31 +422,29 @@ class DbpListDiplomas extends ScopedElementsMixin(DBPEducredLitElement) {
                 ${i18n.t('error-login-message')}
             </div>
 
-            <div class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">
+            <div class="control ${classMap({hidden: true || this.isLoggedIn() || !this.isLoading()})}">
                 <span class="loading">
                     <dbp-mini-spinner text=${i18n.t('loading-message')}></dbp-mini-spinner>
                 </span>
             </div>
-
             ${!this.hasPermissions() ? 
-            html` 
-                <div class="notification is-danger ${classMap({hidden: this.hasPermissions() || !this.isLoggedIn() || this.isLoading()})}">
+            html`
+                <div class="notification is-danger ${classMap({hidden: !this.hasPermissions() || !this.isLoggedIn() || this.isLoading()})}">
                     ${i18n.t('error-permission-message')}
                 </div>` :
             html`
-                <div class="${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
-
+                <div>
                     <h2>${this.activity.getName(this.lang)}</h2>
                     <p class="subheadline">
                         ${this.activity.getDescription(this.lang)}
                     </p>
 
-                    <div class="diplomas ${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
-                        <div class="${classMap({hidden: this.loading})}">
+                    <div class="diplomas">
+                        <div>
                         ${this.diplomas.map(diploma => html`
                             <div class="diploma">
                                 <span class="header">
-                                    <h3>${i18n.t('list-diplomas.entry-diploma')}: ${this.locationName}</h3>
+                                    <h3>${diploma.name}</h3>
                                     <span class="header">
                                         <span>
                                             <b>Spalte 1</b>
@@ -484,20 +474,6 @@ class DbpListDiplomas extends ScopedElementsMixin(DBPEducredLitElement) {
                                          <h3 id="ticket-modal-title">
                                             ${ticketTitle}
                                         </h3>
-                                        <div class="reload-failed ${classMap({hidden: !this.showReloadButton})}">
-                                            <p> ${i18n.t('reload-failed')}</p>
-                                            <button id="reload-btn" 
-                                                    class="button" 
-                                                    @click="${() => {this.updateTicketAndNotify();}}"
-                                                    title="${i18n.t('reload')}">
-                                                <dbp-icon title="${i18n.t('reload')}" 
-                                                      name="reload" class="reload-icon"></dbp-icon>
-                                            </button>
-                                        </div>
-                                        <div class="foto-container">
-                                            <img src="${this.ticketImage || ''}" 
-                                                 alt="${i18n.t('image-alt-text')}" />
-                                        </div>
                                     </div>
                                     <button title="Close" class="modal-close" aria-label="Close modal" @click="${() => {this.closeDialog();}}">
                                         <dbp-icon title="${i18n.t('file-sink.modal-close')}" name="close" class="close-icon"></dbp-icon>
