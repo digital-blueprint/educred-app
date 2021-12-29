@@ -136,12 +136,18 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
         if (!this.isLoggedIn()) {
             return;
         }
-        // console.dir(this.currentDiploma);
-        // console.log(diplomaID);
-        if (Object.keys(this.currentDiploma).length > 0 && this.currentDiploma['@id'] === diplomaID) {
+        const newDID = this._('#did').value;
+        console.log('newDID = ' + newDID);
+
+        if (Object.keys(this.currentDiploma).length > 0
+            && this.currentDiploma['@id'] === diplomaID
+            && newDID === this.did) {
+            this.showVc = true;
+            this.openDialog();
             return;
         }
 
+        this.did = newDID;
         const id = diplomaID.replace('/educationalcredentials/diplomas/', '');
         const response = await this.getVCRequest(id);
         const diploma = await response.json();
@@ -149,6 +155,7 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
 
         this.currentDiploma = diploma;
         this.showVc = true;
+        this.openDialog();
     }
 
     /**
@@ -173,7 +180,9 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
      *
      */
     async getListOfDiplomas() {
-
+        if (!this.isLoggedIn()) {
+            return;
+        }
         let response = await this.getAllDiplomasRequest();
         await this.checkDiplomasRequest(response);
         console.dir(this.diplomas);
@@ -199,12 +208,35 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
     }
 
     /**
+     * Open modal dialog #show-diploma-modal
+     *
+     */
+    openDialog() {
+        if (this._('#show-diploma-modal'))
+            MicroModal.show(this._('#show-diploma-modal'), {
+            disableScroll: true,
+            onClose: modal => {
+                this.showVc = false;
+            },
+        });
+    }
+
+    /**
      * Close modal dialog #show-diploma-modal
      *
      */
     closeDialog() {
         if (this._('#show-diploma-modal'))
             MicroModal.close(this._('#show-diploma-modal'));
+    }
+
+    copyToClipboard() {
+        const text = this.currentDiploma.text;
+        navigator.clipboard.writeText(text).then(function() {
+            console.log('Async: Copying to clipboard was successful!');
+        }, function(err) {
+            console.error('Async: Could not copy text: ', err);
+        });
     }
 
     static get styles() {
@@ -295,7 +327,7 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
             .content-wrapper {
                 padding-right: 44px;
                 display: grid;
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: 1fr; /* 1fr; */
                 grid-gap: 10px;
                 grid-auto-rows: 100%;
             }
@@ -498,23 +530,24 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                         ${loading}
                     </div>
                 </div>
-                <div class="modal micromodal-slide" id="show-ticket-modal" aria-hidden="true">
+                <div class="modal micromodal-slide" id="show-diploma-modal" aria-hidden="true" style="display: ${this.showVc ? 'block' : 'none'}">
                     <div class="modal-overlay" tabindex="-2" data-micromodal-close>
                         <div class="modal-container" id="ticket-modal-box" role="dialog" aria-modal="true"
                             aria-labelledby="ticket-modal-title">
                             <main class="modal-content" id="ticket-modal-content">
-                                <span class="control ticket-loading ${classMap({hidden: !this.showVc})}">
+                                <span class="control ticket-loading ${classMap({hidden: this.showVc})}">
                                     <span class="loading">
                                         <dbp-mini-spinner text=${i18n.t('show-active-tickets.loading-message-ticket')}></dbp-mini-spinner>
                                     </span>
                                 </span>
-${!!this.currentDiploma ? html`
+${Object.keys(this.currentDiploma).length > 0 ? html`
                                 <div class="content-wrapper">
-                                    <div class="left-container ${classMap({hidden: !this.showVc})}">
+                                    <div class="left-container">
                                          <h3 id="ticket-modal-title">
                                             ${this.currentDiploma.name}
                                          </h3>
-                                        <span>${this.currentDiploma.text}</span>
+                                        <textarea style="width:100%;height:500px" readonly wrap="soft">${this.currentDiploma.text}</textarea>
+                                        <button @click="${this.copyToClipboard}">kopieren</button>
                                     </div>
                                     <button title="Close" class="modal-close" aria-label="Close modal" @click="${() => {this.closeDialog();}}">
                                         <dbp-icon title="${i18n.t('file-sink.modal-close')}" name="close" class="close-icon"></dbp-icon>

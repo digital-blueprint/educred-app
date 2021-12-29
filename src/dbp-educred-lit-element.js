@@ -83,7 +83,7 @@ export default class DBPEducredLitElement extends DBPLitElement {
      * @returns {boolean} true or false
      */
     isLoggedIn() {
-        return (this.person !== undefined && this.person !== null);
+        return Object.keys(this.person).length > 0;
     }
 
     /**
@@ -131,7 +131,7 @@ export default class DBPEducredLitElement extends DBPLitElement {
     }
 
     /**
-     * Sends an analytics error event for the request of a room
+     * Sends an analytics error event for a failed request
      *
      * @param category
      * @param action
@@ -140,15 +140,7 @@ export default class DBPEducredLitElement extends DBPLitElement {
      */
     async sendErrorAnalyticsEvent(category, action, information, responseData = {}) {
 
-        let responseBody = {};
-        // Use a clone of responseData to prevent "Failed to execute 'json' on 'Response': body stream already read"
-        // after this function, but still a TypeError will occur if .json() was already called before this function
-        try {
-            responseBody = await responseData.clone().json();
-        } catch (e) {
-            responseBody = responseData; // got already decoded data
-        }
-
+        const responseBody = await responseData.clone().json();
         const data = {
             status: responseData.status || '',
             url: responseData.url || '',
