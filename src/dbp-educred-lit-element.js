@@ -28,9 +28,25 @@ export default class DBPEducredLitElement extends DBPLitElement {
     /**
      *  Request a re-render every time isLoggedIn()/isLoading() changes
      */
-    _updateAuth() {
+    async _updateAuth() {
         this._loginStatus = this.auth['login-status'];
 
+        if (this._loginStatus === 'logged-out') {
+            this.person = {};
+        }
+        if (this._loginStatus === 'logged-in' && Object.keys(this.person).length === 0) {
+            // Fetch the currently logged in person
+            const personId = this.auth['person-id'];
+            const options = {
+                method: 'GET',
+                headers: {
+                    Authorization: "Bearer " + this.auth.token
+                },
+            };
+            let response = await this.httpGetAsync(this.entryPointUrl + '/base/people/' + encodeURIComponent(personId), options);
+            this.person = await response.json();
+            console.dir(this.person);
+        }
         let newLoginState = [this.isLoggedIn(), this.isLoading()];
 
         if (this._loginState.toString() !== newLoginState.toString()) {
@@ -39,7 +55,7 @@ export default class DBPEducredLitElement extends DBPLitElement {
 
         this._loginState = newLoginState;
 
-        if (this.isLoggedIn() && !this._loginCalled) {
+        if (this.isLoggedIn() && !this._loginCalled && this.hasPermissions()) {
             this._loginCalled = true;
             this.loginCallback();
         }
@@ -67,7 +83,7 @@ export default class DBPEducredLitElement extends DBPLitElement {
      * @returns {boolean} true or false
      */
     isLoggedIn() {
-        return (this.auth.person !== undefined && this.auth.person !== null);
+        return (this.person !== undefined && this.person !== null);
     }
 
     /**
@@ -83,17 +99,17 @@ export default class DBPEducredLitElement extends DBPLitElement {
     }
 
     hasPermissions() {
-        return true; // TODO
+        return !!this.person; // TODO
 
-        if (!this.auth.person || !Array.isArray(this.auth.person.roles))
-            return false;
-
-        // TODO: define a new role scope or remove it
-        if (this.auth.person.roles.includes('ROLE_SCOPE_GREENLIGHT')) {
-            return true;
-        }
-
-        return false;
+        // if (!this.auth.person || !Array.isArray(this.auth.person.roles))
+        //     return false;
+        //
+        // // TODO: define a new role scope or remove it
+        // if (this.auth.person.roles.includes('ROLE_SCOPE_GREENLIGHT')) {
+        //     return true;
+        // }
+        //
+        // return false;
     }
 
     /**
@@ -104,7 +120,7 @@ export default class DBPEducredLitElement extends DBPLitElement {
      * @returns {object} response (error or result)
      */
     async httpGetAsync(url, options) {
-        let response = await fetch(url, options).then(result => {
+        return await fetch(url, options).then(result => {
 
             if (!result.ok) throw result;
 
@@ -112,8 +128,6 @@ export default class DBPEducredLitElement extends DBPLitElement {
         }).catch(error => {
             return error;
         });
-
-        return response;
     }
 
     /**
@@ -121,11 +135,12 @@ export default class DBPEducredLitElement extends DBPLitElement {
      *
      * @param category
      * @param action
+     * @param information
      * @param responseData
      */
-    async sendErrorAnalyticsEvent(category, action, responseData = {}) {
-        let responseBody = {};
+    async sendErrorAnalyticsEvent(category, action, information, responseData = {}) {
 
+        let responseBody = {};
         // Use a clone of responseData to prevent "Failed to execute 'json' on 'Response': body stream already read"
         // after this function, but still a TypeError will occur if .json() was already called before this function
         try {
@@ -138,6 +153,8 @@ export default class DBPEducredLitElement extends DBPLitElement {
             status: responseData.status || '',
             url: responseData.url || '',
             description: responseBody['hydra:description'] || '',
+            errorDetails: responseBody['relay:errorDetails'] || '',
+            information: information,
             // get 5 items from the stack trace
             stack: getStackTrace().slice(1, 6)
         };

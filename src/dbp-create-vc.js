@@ -47,6 +47,7 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
             loading: {type: Boolean, attribute: false},
             locationName: {type: String, attribute: 'preselected-option'},
             did: {type: String, attribute: false},
+            diplomas: {type: Array, attribute: false},
             currentDiploma: {type: Object, attribute: false},
             loadingDiplomas: {type: Boolean, attribute: false},
             showVc: {type: Boolean, attribute: false},
@@ -66,8 +67,10 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
 
     loginCallback() {
         super.loginCallback();
-        debugger
-        this.getListOfDiplomas();
+        if (this.isLoggedIn() && this.loadingDiplomas) {
+            this.getListOfDiplomas();
+            this.loadingDiplomas = false;
+        }
     }
 
     /**
@@ -128,14 +131,24 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
         return await this.httpGetAsync(this.entryPointUrl + '/educationalcredentials/diplomas/' + diplomaID + '/verifiable', options);
     }
 
-    async getVC(diplomaID) {
+    async getVC(event) {
+        const diplomaID = event.target.attributes.getNamedItem('data-diplomaid').nodeValue;
+        if (!this.isLoggedIn()) {
+            return;
+        }
+        // console.dir(this.currentDiploma);
+        // console.log(diplomaID);
+        if (Object.keys(this.currentDiploma).length > 0 && this.currentDiploma['@id'] === diplomaID) {
+            return;
+        }
+
         const id = diplomaID.replace('/educationalcredentials/diplomas/', '');
         const response = await this.getVCRequest(id);
-        const diploma = response.body.json();
+        const diploma = await response.json();
         console.dir(diploma);
 
+        this.currentDiploma = diploma;
         this.showVc = true;
-        return diploma;
     }
 
     /**
@@ -427,10 +440,6 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
 
 
     render() {
-        if (this.loadingDiplomas) {
-            this.getListOfDiplomas();
-        }
-
         const i18n = this._i18n;
 
         const loading = html`
@@ -449,7 +458,7 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                 ${i18n.t('error-login-message')}
             </div>
 
-            <div class="control ${classMap({hidden: true || this.isLoggedIn() || !this.isLoading()})}">
+            <div class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">
                 <span class="loading">
                     <dbp-mini-spinner text=${i18n.t('loading-message')}></dbp-mini-spinner>
                 </span>
@@ -480,7 +489,7 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                                         <b>${diploma.educationalLevel}</b> von ${diploma.validFrom}
                                     </span>
                                     <span>id = ${diploma['@id']}</span>
-                                    <button @click="${this.currentDiploma = this.getVC(diploma['@id'])}">export</button>
+                                    <button @click="${this.getVC}" data-diplomaID="${diploma['@id']}">export</button>
                                 </span>
                             </div>
                         `)}
@@ -499,9 +508,9 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                                         <dbp-mini-spinner text=${i18n.t('show-active-tickets.loading-message-ticket')}></dbp-mini-spinner>
                                     </span>
                                 </span>
-
+${!!this.currentDiploma ? html`
                                 <div class="content-wrapper">
-                                    <div class="left-container ${classMap({hidden: this.showVc})}">
+                                    <div class="left-container ${classMap({hidden: !this.showVc})}">
                                          <h3 id="ticket-modal-title">
                                             ${this.currentDiploma.name}
                                          </h3>
@@ -510,7 +519,7 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                                     <button title="Close" class="modal-close" aria-label="Close modal" @click="${() => {this.closeDialog();}}">
                                         <dbp-icon title="${i18n.t('file-sink.modal-close')}" name="close" class="close-icon"></dbp-icon>
                                     </button>
-                                </div>
+                                </div>` : ''}
                             </main>
                         </div>
                     </div>
