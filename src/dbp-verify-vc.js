@@ -7,7 +7,6 @@ import {Activity} from './activity.js';
 import metadata from './dbp-create-vc.metadata.json';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import {classMap} from 'lit-html/directives/class-map.js';
-import MicroModal from "./micromodal.es";
 import {Icon, LoadingButton, MiniSpinner} from "@dbp-toolkit/common";
 // import {send} from "@dbp-toolkit/common/notification";
 
@@ -19,9 +18,8 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         this.entryPointUrl = '';
         this.activity = new Activity(metadata);
         this.loading = false;
-        this.id = false;
-        this.did = '';
         this.diploma = {};
+        this.status = 0;
     }
 
     static get scopedElements() {
@@ -40,18 +38,8 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
             loading: {type: Boolean, attribute: false},
             id: {type: String, attribute: false},
             diploma: {type: Object, attribute: false},
+            status: {type: Number, attribute: false}
         };
-    }
-
-    disconnectedCallback() {
-        clearTimeout(this.timer);
-        window.removeEventListener('focus', this.boundUpdateTicket);
-        super.disconnectedCallback();
-    }
-
-    async connectedCallback() {
-        super.connectedCallback();
-        window.addEventListener('focus', this.boundUpdateTicket);
     }
 
     update(changedProperties) {
@@ -65,46 +53,35 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         super.update(changedProperties);
     }
 
-    async getVCRequest(diplomaID) {
+    async postVCRequest(text) {
+        let formData = new FormData();
+        formData.append('text', text);
+
         const options = {
-            method: 'GET',
+            method: 'POST',
             headers: {
-                'Content-Type': 'application/ld+json',
+                //'Content-Type': 'application/ld+json',
+                Authorization: "Bearer " + this.auth.token
             },
+            body: formData
         };
 
-        return await this.httpGetAsync(this.entryPointUrl + '//educationalcredentials/diplomas/' + diplomaID + '/verifiable', options);
+        return await this.httpGetAsync(this.entryPointUrl + '/educationalcredentials/diplomas', options);
     }
 
-    /**
-     * Generate a QR Code if a hash is available and valid,
-     * updates the ticket and shows it in modal view
-     *
-     * @param {object} ticket
-     */
-    async showVC(ticket) {
-        this.loading = true;
+    async verifyVC() {
+        //this._('#vc-btn').disabled = true;
+        const text = this._('#vc-text').value;
+        console.log(text);
 
-        if (this._('#show-vc-modal')) {
-            MicroModal.show(this._('#show-vc-modal'), {
-                disableScroll: true,
-                onClose: modal => {
-                    this.loading = false;
-                    this.ticketOpen = false;
-                },
-            });
+        const response = await this.postVCRequest(text);
+        const diploma = await response.json();
+        console.dir(diploma);
+        if (response.ok) {
+            this.status = 1;
+        } else if (response.status === 400) {
+            this.status = 90;
         }
-        await this.getVCRequest(this.id);
-        this.loading = false;
-    }
-
-    /**
-     * Close modal dialog #show-ticket-modal
-     *
-     */
-    closeDialog() {
-        if (this._('#show-vc-modal'))
-            MicroModal.close(this._('#show-vc-modal'));
     }
 
     static get styles() {
@@ -115,28 +92,48 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
             ${commonStyles.getActivityCSS()}
             ${commonStyles.getNotificationCSS()}
             ${commonStyles.getButtonCSS()}
-            ${commonStyles.getModalDialogCSS()}
             ${commonStyles.getLinkCss()}
             .vc {
+            /*  
                 display: flex;
                 justify-content: space-between;
                 column-gap: 15px;
                 row-gap: 1.5em;
                 align-items: center;
-                margin-bottom: 2em;
+             */
+                margin-bottom: 1rem;
             }
 
             .header {
+            /*
                 display: grid;
                 align-items: center;
+             */
             }
 
+            .vc-text {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+            .vc-text textarea {
+                width: 100%;
+            }
+            
             .btn {
-                display: flex;
-                justify-content: space-between;
-                column-gap: 0.5em;
+                margin-bottom: 1rem;
             }
 
+            .verify-0 {
+                
+            }
+            .verify-1 {
+                color: var(--dbp-success-bg-color);
+                
+            }
+            .verify-90 {
+                color: var(--dbp-danger-bg-color);
+            }
+            
             .border {
                 margin-top: 2rem;
                 padding-top: 2rem;
@@ -207,7 +204,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                 margin-left: 5px;
             }
 
-            .ticket h3 {
+            .vc h3 {
                 margin-bottom: 0.2rem;
             }
 
@@ -313,13 +310,6 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
     render() {
         const i18n = this._i18n;
 
-        const ticketTitle = html`
-            <slot name="ticket-place">
-                ${i18n.t('show-active-tickets.show-ticket-title')}<strong>${i18n.t('show-reference-ticket.place-name')}</strong>
-            </slot>
-        `;
-
-
         const loading = html`
             <span class="control ${classMap({hidden: !this.loading})}">
                         <span class="loading">
@@ -330,79 +320,43 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
 
         return html`
 
-            <div class="control ${classMap({hidden: !this.isLoading()})}">
+            <div class="notification is-warning ${classMap({hidden: this.isLoggedIn() || this.isLoading()})}">
+                ${i18n.t('error-login-message')}
+            </div>
+
+            <div class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">
                 <span class="loading">
                     <dbp-mini-spinner text=${i18n.t('loading-message')}></dbp-mini-spinner>
                 </span>
             </div>
-
-            <div class="${classMap({hidden: this.isLoading()})}">
-
-                <h2>${this.activity.getName(this.lang)}</h2>
-                <p class="subheadline">
-                    <slot name="description">
-                        ${this.activity.getDescription(this.lang)}
-                    </slot>
-                </p>
-
-                <div class="tickets ${classMap({hidden: this.isLoading()})}">
-                    <div class="${classMap({hidden: this.loading})}">
-                        <div class="ticket">
-                            <span class="header">
-                                <h3>
-                                    <slot name="place">
-                                        ${i18n.t('show-active-tickets.entry-ticket')}: ${i18n.t('show-reference-ticket.place-name')}
-                                    </slot>
-                                </h3>
-                                <span class="header">
-                                    <slot name="ticket-description">
-                                        <span>${i18n.t('show-reference-ticket.description')}</span>
-                                    </slot>
-                                </span>
-                            </span>
-                            <div class="btn">
-                                <dbp-loading-button type="is-primary"
-                                                    value="${i18n.t('show-active-tickets.show-btn-text')}"
-                                                    @click="${() => {
-                                                        this.showVC();
-                                                    }}"
-                                                    title="${i18n.t('show-active-tickets.show-btn-text')}"></dbp-loading-button>
-                            </div>
-                        </div>
+            ${!this.isLoggedIn() || !this.hasPermissions() ?
+            html`
+                <div class="notification is-danger ${classMap({hidden: !this.hasPermissions() || !this.isLoggedIn() || this.isLoading()})}">
+                    ${i18n.t('error-permission-message')}
+                </div>` :
+            html`
+                <div class="vc">
+                    <div class="header">
+                        <h3>${i18n.t('upload-other-diploma')}</h3>
+                        <span>${i18n.t('upload-other-diploma-text')}</span>
+                    </div>
+                    <div class="vc-text">
+                        <textarea name="text" id="vc-text"></textarea>
+                    </div>
+                    <div class="btn">
+                        <dbp-loading-button type="is-primary" id="vc-btn" value="${i18n.t('upload-btn-text')}"
+                                            @click="${() => {this.verifyVC();}}"
+                                            title="${i18n.t('upload-btn-text')}"></dbp-loading-button>
                     </div>
                     ${loading}
-                </div>
-            </div>
-
-            <div class="modal micromodal-slide" id="show-ticket-modal" aria-hidden="true">
-                <div class="modal-overlay" tabindex="-2" data-micromodal-close>
-                    <div class="modal-container" id="ticket-modal-box" role="dialog" aria-modal="true"
-                         aria-labelledby="ticket-modal-title">
-                        <main class="modal-content" id="ticket-modal-content">
-                            <span class="control ticket-loading ${classMap({hidden: !this.ticketLoading})}">
-                                <span class="loading">
-                                    <dbp-mini-spinner text=${i18n.t('show-active-tickets.loading-message-ticket')}></dbp-mini-spinner>
-                                </span>
-                            </span>
-
-                            <div class="content-wrapper">
-                                <div class="left-container ${classMap({hidden: this.ticketLoading})}">
-                                    <h3 id="ticket-modal-title">
-                                        ${ticketTitle}
-                                    </h3>
-                                </div>
-                                
-                                <button title="Close" class="modal-close" aria-label="Close modal" @click="${() => {
-                                    this.closeDialog();
-                                }}">
-                                    <dbp-icon title="${i18n.t('file-sink.modal-close')}" name="close"
-                                              class="close-icon"></dbp-icon>
-                                </button>
-                            </div>
-                        </main>
+                    <div class="response">
+                        <span>${i18n.t('response-other-diploma')}</span>
+                        <span class="verify-${this.status}">${i18n.t('response-other-diploma-' + this.status + '-text')}</span>
                     </div>
                 </div>
             </div>
+
+        `}
         `;
     }
 }
