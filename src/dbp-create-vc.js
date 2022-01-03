@@ -495,7 +495,7 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                     <dbp-mini-spinner text=${i18n.t('loading-message')}></dbp-mini-spinner>
                 </span>
             </div>
-            ${!this.hasPermissions() ? 
+            ${!this.isLoggedIn() || !this.hasPermissions() ? 
             html`
                 <div class="notification is-danger ${classMap({hidden: !this.hasPermissions() || !this.isLoggedIn() || this.isLoading()})}">
                     ${i18n.t('error-permission-message')}
