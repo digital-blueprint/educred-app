@@ -267,6 +267,12 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                 align-items: center;
             }
 
+            .btn-box {
+                margin-top: 1.5rem;
+            }
+            .btn-box-label {
+                margin-right: 1.5rem;
+            }
             .btn {
                 display: flex;
                 justify-content: space-between;
@@ -284,8 +290,8 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
             }
 
             .proof-container, .information-container {
-                background-color: var(--dbp-info-bg-color);;
-                color: var(--dbp-info-text-color);;
+                background-color: var(--dbp-info-bg-color);
+                color: var(--dbp-info-text-color);
                 padding: 40px 10px;
                 display: flex;
                 flex-direction: column;
@@ -299,7 +305,7 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
             }
 
             .proof-container .int-link-external, .proof-container .int-link-internal, .information-container .int-link-internal {
-                border-bottom: 1px solid white;;
+                border-bottom: 1px solid white;
             }
 
             .proof-container .int-link-external::after {
@@ -490,11 +496,6 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                 ${i18n.t('error-login-message')}
             </div>
 
-            <div class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">
-                <span class="loading">
-                    <dbp-mini-spinner text=${i18n.t('loading-message')}></dbp-mini-spinner>
-                </span>
-            </div>
             ${!this.isLoggedIn() || !this.hasPermissions() ? 
             html`
                 <div class="notification is-danger ${classMap({hidden: !this.hasPermissions() || !this.isLoggedIn() || this.isLoading()})}">
@@ -509,7 +510,7 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
 
                     <div>
                         <label for="did">DID:</label>
-                        <input type="text" name="did" id="did" value="${this.did}">
+                        <input type="text" name="did" id="did" size="64" value="${this.did}">
                     </div>
                     <div class="diplomas">
                         <div>
@@ -518,7 +519,7 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                                 <span class="header">
                                     <h3>${diploma.name}</h3>
                                     <span>
-                                        <b>${diploma.educationalLevel}</b> von ${diploma.validFrom}
+                                        <b>${diploma.educationalLevel}</b> ${i18n.t('from')} ${diploma.validFrom.substr(0, 10)}
                                     </span>
                                     <span>id = ${diploma['@id']}</span>
                                     <button @click="${this.getVC}" data-diplomaID="${diploma['@id']}">export</button>
@@ -547,7 +548,11 @@ ${Object.keys(this.currentDiploma).length > 0 ? html`
                                             ${this.currentDiploma.name}
                                          </h3>
                                         <textarea style="width:100%;height:500px" readonly wrap="soft">${this.currentDiploma.text}</textarea>
-                                        <button @click="${this.copyToClipboard}">kopieren</button>
+                                        <div class="btn-box">
+                                            <span class="btn-box-label">${i18n.t('transfer-your-vc')}</span>
+                                            <button @click="${this.copyToClipboard}">${i18n.t('transfer-your-vc-clipboard')}</button>
+                                            <button @click="${() => alert('add wallet interaction here!')}">${i18n.t('transfer-your-vc-wallet')}</button>
+                                        </div>
                                     </div>
                                     <button title="Close" class="modal-close" aria-label="Close modal" @click="${() => {this.closeDialog();}}">
                                         <dbp-icon title="${i18n.t('file-sink.modal-close')}" name="close" class="close-icon"></dbp-icon>

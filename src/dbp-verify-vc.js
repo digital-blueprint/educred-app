@@ -74,6 +74,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         const text = this._('#vc-text').value;
         console.log(text);
 
+        this.loading = true;
         const response = await this.postVCRequest(text);
         const diploma = await response.json();
         console.dir(diploma);
@@ -82,6 +83,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         } else if (response.status === 400) {
             this.status = 90;
         }
+        this.loading = false;
     }
 
     static get styles() {
@@ -113,6 +115,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
 
             .vc-text {
                 width: 100%;
+                margin-top: 1rem;
                 margin-bottom: 1rem;
             }
             .vc-text textarea {
@@ -341,17 +344,18 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                         <span>${i18n.t('upload-other-diploma-text')}</span>
                     </div>
                     <div class="vc-text">
-                        <textarea name="text" id="vc-text"></textarea>
+                        <textarea name="text" id="vc-text" rows="12"></textarea>
                     </div>
                     <div class="btn">
                         <dbp-loading-button type="is-primary" id="vc-btn" value="${i18n.t('upload-btn-text')}"
                                             @click="${() => {this.verifyVC();}}"
                                             title="${i18n.t('upload-btn-text')}"></dbp-loading-button>
                     </div>
-                    ${loading}
                     <div class="response">
                         <span>${i18n.t('response-other-diploma')}</span>
+                        ${this.loading ? loading : html`
                         <span class="verify-${this.status}">${i18n.t('response-other-diploma-' + this.status + '-text')}</span>
+                        `}
                     </div>
                 </div>
             </div>
