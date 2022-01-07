@@ -8,7 +8,7 @@
 
 ```bash
 # get the source
-git clone git@gitlab.tugraz.at:dbp/educred/educred.git
+git clone git@gitlab.tugraz.at:dbp/educational-credentials/educred.git
 cd educred
 git submodule update --init
 
@@ -51,11 +51,7 @@ npx @digital-blueprint/cli update-app educred
 
 ## Activities
 
-### dbp-list-diplomas
-
-TODO
-
-### dbp-creatze-vc
+### dbp-create-vc
 
 TODO
 
