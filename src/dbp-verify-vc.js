@@ -86,6 +86,16 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         this.loading = false;
     }
 
+    copyFromClipboard() {
+        navigator.clipboard.readText().then(
+            text => {
+                this._('#vc-text').value = text;
+                console.log('Async: Copying from clipboard was successful!');
+            },
+            err => console.error('Async: Could not copy from clipboard. error: ', err)
+        );
+    }
+
     static get styles() {
         // language=css
         return css`
@@ -121,7 +131,13 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
             .vc-text textarea {
                 width: 100%;
             }
-            
+
+            .btn-box {
+                margin-top: 1.5rem;
+            }
+            .btn-box-label {
+                margin-right: 1.5rem;
+            }
             .btn {
                 margin-bottom: 1rem;
             }
@@ -313,6 +329,8 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
     render() {
         const i18n = this._i18n;
 
+        const canPaste = navigator.clipboard['readText'] !== undefined;
+
         const loading = html`
             <span class="control ${classMap({hidden: !this.loading})}">
                         <span class="loading">
@@ -342,6 +360,11 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                     <div class="header">
                         <h3>${i18n.t('upload-other-diploma')}</h3>
                         <span>${i18n.t('upload-other-diploma-text')}</span>
+                    </div>
+                    <div class="btn-box">
+                        <span class="btn-box-label">${i18n.t('fetch-your-vc')}</span>
+                        <button @click="${this.copyFromClipboard}" ?disabled="${!canPaste}">${i18n.t('fetch-your-vc-clipboard')}</button>
+                        <button @click="${() => alert('add wallet interaction here!')}">${i18n.t('fetch-your-vc-wallet')}</button>
                     </div>
                     <div class="vc-text">
                         <textarea name="text" id="vc-text" rows="12"></textarea>

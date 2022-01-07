@@ -11,8 +11,11 @@
   "response-other-diploma-0-text": "Noch kein Diplom eingereicht.",
   "response-other-diploma-1-text": "Das Diplom wurde erfolgreich verifiziert.",
   "response-other-diploma-90-text": "Das Diplom konnte nicht verifiziert werden!",
-  "transfer-your-vc": "Übernehmen Sie Ihren elektronischen Nachweis",
+  "transfer-your-vc": "Übernehmen Sie Ihren elektronischen Nachweis in",
   "transfer-your-vc-clipboard": "Zwischenablage",
   "transfer-your-vc-wallet": "Wallet",
-  "from": "von"
+  "from": "von",
+  "fetch-your-vc": "Übernehmen Sie Ihren elektronischen Nachweis aus",
+  "fetch-your-vc-clipboard": "Zwischenablage",
+  "fetch-your-vc-wallet": "Wallet"
 }

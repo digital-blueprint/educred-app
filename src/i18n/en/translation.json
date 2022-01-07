@@ -11,8 +11,11 @@
   "response-other-diploma-0-text": "No diploma submitted.",
   "response-other-diploma-1-text": "The diploma was successfully verified.",
   "response-other-diploma-90-text": "THe diploma failed to verify!",
-  "transfer-your-vc": "Transfer your verifiable credential",
+  "transfer-your-vc": "Transfer your verifiable credential to",
   "transfer-your-vc-clipboard": "Clipboard",
   "transfer-your-vc-wallet": "Wallet",
-  "from": "from"
+  "from": "from",
+  "fetch-your-vc": "Transfer your verifiable credential from",
+  "fetch-your-vc-clipboard": "Clipboard",
+  "fetch-your-vc-wallet": "Wallet"
 }
