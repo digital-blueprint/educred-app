@@ -30,19 +30,16 @@ set('rsync_dest','{{release_path}}');
 host('demo')
     ->stage('demo')
     ->hostname('mw@vpu01-demo.tugraz.at')
-    ->set('shared_dirs', ['local/@dbp-topics/educred/dgc-trust/prod'])
     ->set('deploy_path', '/home/mw/demo/deploy/apps/educred');
 
 host('development')
     ->stage('development')
     ->hostname('mw@mw01-dev.tugraz.at')
-    ->set('shared_dirs', ['local/@dbp-topics/educred/dgc-trust/prod'])
     ->set('deploy_path', '/home/mw/dev/deploy/apps/educred');
 
 host('production')
     ->stage('production')
     ->hostname('mw@mw01-prod.tugraz.at')
-    ->set('shared_dirs', ['local/@dbp-topics/educred/dgc-trust/prod'])
     ->set('deploy_path', '/home/mw/prod_educred/deploy');
 
 task('build', function () {
