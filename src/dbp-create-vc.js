@@ -116,17 +116,22 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
      * Gets a specific vc from diploma
      *
      * @param diplomaID
+     * @param format
      * @returns {object} response
      */
-    async getVCRequest(diplomaID) {
+    async getVCRequest(diplomaID, format) {
 
+        const vars = {
+            did: this.did,
+            format: format ? 'jsonldjwt' : '',
+        };
         const options = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/ld+json',
                 Authorization: "Bearer " + this.auth.token
             },
-            body: '{"did":"'+ this.did + '"}',
+            body: JSON.stringify(vars),
         };
         return await this.httpGetAsync(this.entryPointUrl + '/educationalcredentials/diplomas/' + diplomaID + '/verifiable', options);
     }
@@ -138,18 +143,20 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
         }
         const newDID = this._('#did').value;
         console.log('newDID = ' + newDID);
+        const asJWT = this._('#format').checked;
+        console.log('JWT = ' + asJWT);
 
-        if (Object.keys(this.currentDiploma).length > 0
-            && this.currentDiploma['@id'] === diplomaID
-            && newDID === this.did) {
-            this.showVc = true;
-            this.openDialog();
-            return;
-        }
+        // if (Object.keys(this.currentDiploma).length > 0
+        //     && this.currentDiploma['@id'] === diplomaID
+        //     && newDID === this.did) {
+        //     this.showVc = true;
+        //     this.openDialog();
+        //     return;
+        // }
 
         this.did = newDID;
         const id = diplomaID.replace('/educationalcredentials/diplomas/', '');
-        const response = await this.getVCRequest(id);
+        const response = await this.getVCRequest(id, asJWT);
         const diploma = await response.json();
         console.dir(diploma);
 
@@ -512,6 +519,10 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                         <label for="did">DID:</label>
                         <input type="text" name="did" id="did" size="64" value="${this.did}">
                     </div>
+                    <div>
+                        <label for="format">JWT:</label>
+                        <input type="checkbox" name="format" id="format" value="1">
+                    </div>
                     <div class="diplomas">
                         <div>
                         ${this.diplomas.map(diploma => html`
@@ -547,7 +558,7 @@ ${Object.keys(this.currentDiploma).length > 0 ? html`
                                          <h3 id="ticket-modal-title">
                                             ${this.currentDiploma.name}
                                          </h3>
-                                        <textarea style="width:100%;height:500px" readonly wrap="soft">${this.currentDiploma.text}</textarea>
+                                        <textarea style="width:100%" rows="12" readonly wrap="soft">${this.currentDiploma.text}</textarea>
                                         <div class="btn-box">
                                             <span class="btn-box-label">${i18n.t('transfer-your-vc')}</span>
                                             <button @click="${this.copyToClipboard}">${i18n.t('transfer-your-vc-clipboard')}</button>

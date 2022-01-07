@@ -367,7 +367,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                         <button @click="${() => alert('add wallet interaction here!')}">${i18n.t('fetch-your-vc-wallet')}</button>
                     </div>
                     <div class="vc-text">
-                        <textarea name="text" id="vc-text" rows="12"></textarea>
+                        <textarea name="text" id="vc-text" rows="12" wrap="soft"></textarea>
                     </div>
                     <div class="btn">
                         <dbp-loading-button type="is-primary" id="vc-btn" value="${i18n.t('upload-btn-text')}"
