@@ -32,6 +32,7 @@ linting:
 
 publish:
   stage: deploy
+  when: manual
   only:
     refs:
       - main
