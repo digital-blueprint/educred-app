@@ -55,7 +55,8 @@
     "i18next": "^20.0.0",
     "lit-element": "^2.3.1",
     "lit-html": "^1.2.1",
-    "mockdate": "^3.0.5"
+    "mockdate": "^3.0.5",
+    "credential-handler-polyfill": "^2.1.0"
   },
   "scripts": {
     "build": "rollup -c",

@@ -70,6 +70,7 @@ function getOrigin(url) {
 config.CSP = `default-src 'self' 'unsafe-eval' 'unsafe-inline' \
     ${getOrigin(config.matomoUrl)} ${getOrigin(config.keyCloakBaseURL)} ${getOrigin(config.entryPointURL)} \
     httpbin.org ${getOrigin(config.nextcloudBaseURL)} \
+    https://authn.io https://wallet.interop.digitalbazaar.com \
     ${getOrigin(config.contentUrl)}; \
     img-src * blob: data:; font-src 'self' data:`;
 

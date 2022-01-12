@@ -8,6 +8,7 @@ import metadata from './dbp-create-vc.metadata.json';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import {classMap} from 'lit-html/directives/class-map.js';
 import {Icon, LoadingButton, MiniSpinner} from "@dbp-toolkit/common";
+import * as polyfill from "credential-handler-polyfill";
 // import {send} from "@dbp-toolkit/common/notification";
 
 class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
@@ -20,6 +21,8 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         this.loading = false;
         this.diploma = {};
         this.status = 0;
+
+        polyfill.loadOnce().then(x => console.log('Ready to work with credentials!'));
     }
 
     static get scopedElements() {
@@ -95,6 +98,84 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
             err => console.error('Async: Could not copy from clipboard. error: ', err)
         );
     }
+
+    /* experimental wallet integration */
+    uuidv4() {
+        return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+            (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+        );
+    }
+
+    getDID() {
+        const credentialQuery = {
+            "web": {
+                "VerifiablePresentation": {
+                    "challenge": this.uuidv4(),
+                    "domain": window.location.hostname,
+                    "query": {
+                        "type": "DIDAuth"
+                    }
+                }
+            }
+        };
+        console.log("Requesting DID...");
+        navigator.credentials.get(credentialQuery).then(result => {
+            console.log("Result of get() request:");
+            console.dir(result);
+            this.did = result.data.holder ?? '';
+        });
+    }
+
+    saveVC() {
+        const chapiVerifiableCredential = JSON.parse(this.currentDiploma.text);
+        const chapiVerifiablePresentation = {
+            "@context": [
+                "https://www.w3.org/2018/credentials/v1"
+            ],
+            "type": [
+                "VerifiablePresentation"
+            ],
+            "holder": chapiVerifiableCredential.credentialSubject.id,
+            "verifiableCredential": [ chapiVerifiableCredential ]
+        };
+        const webCredentialWrapper = new polyfill.WebCredential('VerifiablePresentation',
+            chapiVerifiablePresentation);
+        console.log("Storing credential...");
+        navigator.credentials.store(webCredentialWrapper).then(result => {
+            console.log('Result of store() request:');
+            console.dir(result);
+        });
+    }
+
+    retrieveVC() {
+        const credentialQuery = {
+            "web": {
+                "VerifiablePresentation": {
+                    "challenge": this.uuidv4(),
+                    "domain": window.location.hostname,
+                    "query": [{
+                        "type": "QueryByExample",
+                        "credentialQuery": {
+                            "reason": "Please present a Verifiable Credential.",
+                            "example": {
+                                "@context": [
+                                    "https://www.w3.org/2018/credentials/v1"
+                                ],
+                                "type": ["VerifiableCredential"]
+                            }
+                        },
+                    }]
+                }
+            }
+        };
+        console.log("Requesting credential...");
+        navigator.credentials.get(credentialQuery).then(result => {
+            console.log("Result of get() request:");
+            console.dir(result);
+            this._('#vc-text').value = result.data;
+        });
+    }
+    /* ------------------------------- */
 
     static get styles() {
         // language=css
@@ -364,7 +445,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                     <div class="btn-box">
                         <span class="btn-box-label">${i18n.t('fetch-your-vc')}</span>
                         <button @click="${this.copyFromClipboard}" ?disabled="${!canPaste}">${i18n.t('fetch-your-vc-clipboard')}</button>
-                        <button @click="${() => alert('add wallet interaction here!')}">${i18n.t('fetch-your-vc-wallet')}</button>
+                        <button @click="${this.retrieveVC}">wallet</button>
                     </div>
                     <div class="vc-text">
                         <textarea name="text" id="vc-text" rows="12" wrap="soft"></textarea>
