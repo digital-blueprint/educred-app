@@ -172,7 +172,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         navigator.credentials.get(credentialQuery).then(result => {
             console.log("Result of get() request:");
             console.dir(result);
-            this._('#vc-text').value = result.data;
+            this._('#vc-text').value =  JSON.stringify(result.data.verifiableCredential[0], null,2);
         });
     }
     /* ------------------------------- */
