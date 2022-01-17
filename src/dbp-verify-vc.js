@@ -159,7 +159,8 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                             "reason": "Please present a Verifiable Credential.",
                             "example": {
                                 "@context": [
-                                    "https://www.w3.org/2018/credentials/v1"
+                                    'https://www.w3.org/2018/credentials/v1',
+                                    'https://wicket1001.github.io/ebsi4austria-examples/context/essif-schemas-vc-2020-v2.jsonld',
                                 ],
                                 "type": ["VerifiableCredential"]
                             }
@@ -414,10 +415,10 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
 
         const loading = html`
             <span class="control ${classMap({hidden: !this.loading})}">
-                        <span class="loading">
-                            <dbp-mini-spinner text=${i18n.t('loading-message')}></dbp-mini-spinner>
-                        </span>
-                    </span>
+                <span class="loading">
+                    <dbp-mini-spinner text=${i18n.t('loading-message')}></dbp-mini-spinner>
+                </span>
+            </span>
         `;
 
         return html`

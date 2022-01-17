@@ -279,7 +279,8 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
         const chapiVerifiableCredential = JSON.parse(this.currentDiploma.text);
         const chapiVerifiablePresentation = {
             "@context": [
-                "https://www.w3.org/2018/credentials/v1"
+                'https://www.w3.org/2018/credentials/v1',
+                'https://wicket1001.github.io/ebsi4austria-examples/context/essif-schemas-vc-2020-v2.jsonld',
             ],
             "type": [
                 "VerifiablePresentation"
@@ -642,7 +643,7 @@ ${Object.keys(this.currentDiploma).length > 0 ? html`
                                         <div class="btn-box">
                                             <span class="btn-box-label">${i18n.t('transfer-your-vc')}</span>
                                             <button @click="${this.copyToClipboard}">${i18n.t('transfer-your-vc-clipboard')}</button>
-                                            <button @click="${this.saveVC}">${i18n.t('transfer-your-vc-wallet')}</button>
+                                            <button @click="${this.saveVC}" ?disabled="${this._('#format').checked}">${i18n.t('transfer-your-vc-wallet')}</button>
                                         </div>
                                     </div>
                                     <button title="Close" class="modal-close" aria-label="Close modal" @click="${() => {this.closeDialog();}}">
