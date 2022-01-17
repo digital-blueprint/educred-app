@@ -228,7 +228,18 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
             .vc-text textarea {
                 width: 100%;
             }
+            
+            .vc-select {
+                width: 100%;
+                margin-top: 1rem;
+            }
+            
+            select:not(.select) {
+                background-size: 16px;
 
+                background-position-x: calc(100% - 0.4rem);
+            }
+            
             .btn-box {
                 margin-top: 1.5rem;
             }
@@ -463,7 +474,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                         <button @click="${this.copyFromClipboard}" ?disabled="${!canPaste}">${i18n.t('fetch-your-vc-clipboard')}</button>
                         <button @click="${this.retrieveVC}">wallet</button>
                     </div>
-                    <div class="control ${classMap({hidden: this.diplomas.length<2})}">
+                    <div class="control vc-select ${classMap({hidden: this.diplomas.length<2})}">
                         <select name="diploma_index" id="diplomas" @change="${() => this.selectDiploma()}" style="width:100%">
                             ${this.diplomas.map((item) => html`<option value="${item.id || item.credentialSubject.id}">${item.studyProgram || item.credentialSubject.studyProgram}</option>`)}
                         </select> 

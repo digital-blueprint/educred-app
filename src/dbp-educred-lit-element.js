@@ -45,7 +45,7 @@ export default class DBPEducredLitElement extends DBPLitElement {
             };
             let response = await this.httpGetAsync(this.entryPointUrl + '/base/people/' + encodeURIComponent(personId), options);
             this.person = await response.json();
-            console.dir(this.person);
+            //console.dir(this.person);
         }
         let newLoginState = [this.isLoggedIn(), this.isLoading()];
 
