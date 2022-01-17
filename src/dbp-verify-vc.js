@@ -21,6 +21,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         this.loading = false;
         this.diploma = {};
         this.status = 0;
+        this.diplomas = [];
 
         polyfill.loadOnce().then(x => console.log('Ready to work with credentials!'));
     }
@@ -75,7 +76,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
     async verifyVC() {
         //this._('#vc-btn').disabled = true;
         const text = this._('#vc-text').value;
-        console.log(text);
+        //console.log(text);
 
         this.loading = true;
         const response = await this.postVCRequest(text);
@@ -171,12 +172,26 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         };
         console.log("Requesting credential...");
         navigator.credentials.get(credentialQuery).then(result => {
-            console.log("Result of get() request:");
-            console.dir(result);
-            this._('#vc-text').value =  JSON.stringify(result.data.verifiableCredential[0], null,2);
+            //console.log("Result of get() request:");
+            //console.dir(result);
+            this.diplomas = result.data.verifiableCredential;
+            //console.dir(this.diplomas);
+            this.diploma = this.diplomas[0];
+            this._('#vc-text').value =  JSON.stringify(this.diploma, null,2);
         });
     }
     /* ------------------------------- */
+
+    selectDiploma() {
+        const selected = this._('#diplomas').value;
+        console.log('selected: ' + selected);
+        this.diplomas.forEach(item => {
+           if (selected === item.id || selected === item.credentialSubject.id) {
+               this.diploma = item;
+               this._('#vc-text').value =  JSON.stringify(this.diploma, null,2);
+           }
+        });
+    }
 
     static get styles() {
         // language=css
@@ -447,6 +462,11 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                         <span class="btn-box-label">${i18n.t('fetch-your-vc')}</span>
                         <button @click="${this.copyFromClipboard}" ?disabled="${!canPaste}">${i18n.t('fetch-your-vc-clipboard')}</button>
                         <button @click="${this.retrieveVC}">wallet</button>
+                    </div>
+                    <div class="control ${classMap({hidden: this.diplomas.length<2})}">
+                        <select name="diploma_index" id="diplomas" @change="${() => this.selectDiploma()}" style="width:100%">
+                            ${this.diplomas.map((item) => html`<option value="${item.id || item.credentialSubject.id}">${item.studyProgram || item.credentialSubject.studyProgram}</option>`)}
+                        </select> 
                     </div>
                     <div class="vc-text">
                         <textarea name="text" id="vc-text" rows="12" wrap="soft"></textarea>
