@@ -1,6 +1,0 @@
-{
-  "print": "Drucken",
-  "export-excel": "Excel Export",
-  "export-csv": "CSV Export",
-  "column-search-placeholder": "Nach {{fieldName}} suchen"
-}
