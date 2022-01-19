@@ -1,10 +1,10 @@
 import {createInstance} from './i18n.js';
-import {css, html} from 'lit-element';
+import {css, html} from 'lit';
 import DBPEducredLitElement from "./dbp-educred-lit-element";
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import {Icon, InlineNotification, LoadingButton, MiniSpinner} from '@dbp-toolkit/common';
-import {classMap} from 'lit-html/directives/class-map.js';
+import {classMap} from 'lit/directives/class-map.js';
 import MicroModal from './micromodal.es';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 //import {send} from "@dbp-toolkit/common/notification";

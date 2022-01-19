@@ -1,12 +1,12 @@
 import {createInstance} from './i18n.js';
-import {css, html} from 'lit-element';
+import {css, html} from 'lit';
 import DBPEducredLitElement from "./dbp-educred-lit-element";
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import {Activity} from './activity.js';
 import metadata from './dbp-create-vc.metadata.json';
 import * as commonStyles from '@dbp-toolkit/common/styles';
-import {classMap} from 'lit-html/directives/class-map.js';
+import {classMap} from 'lit/directives/class-map.js';
 import {Icon, LoadingButton, MiniSpinner} from "@dbp-toolkit/common";
 import * as polyfill from "credential-handler-polyfill";
 // import {send} from "@dbp-toolkit/common/notification";
