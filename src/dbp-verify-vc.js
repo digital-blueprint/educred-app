@@ -203,21 +203,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
             ${commonStyles.getButtonCSS()}
             ${commonStyles.getLinkCss()}
             .vc {
-            /*  
-                display: flex;
-                justify-content: space-between;
-                column-gap: 15px;
-                row-gap: 1.5em;
-                align-items: center;
-             */
                 margin-bottom: 1rem;
-            }
-
-            .header {
-            /*
-                display: grid;
-                align-items: center;
-             */
             }
 
             .vc-text {
@@ -236,7 +222,6 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
             
             select:not(.select) {
                 background-size: 16px;
-
                 background-position-x: calc(100% - 0.4rem);
             }
             
@@ -261,12 +246,6 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                 color: var(--dbp-danger-bg-color);
             }
             
-            .border {
-                margin-top: 2rem;
-                padding-top: 2rem;
-                border-top: 1px solid black;
-            }
-
             #vc-modal-box {
                 display: flex;
                 flex-direction: column;
@@ -275,42 +254,6 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                 max-width: 880px;
                 min-height: unset;
                 height: auto;
-            }
-
-            .proof-container, .information-container {
-                background-color: #245b78;
-                color: white;
-                padding: 40px 10px;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-evenly;
-                align-items: center;
-                text-align: center;
-            }
-
-            .proof-container {
-                text-align: center;
-            }
-
-            .proof-container .int-link-external, .information-container .int-link-external, .proof-container .int-link-internal, .information-container .int-link-internal {
-                border-bottom: 1px solid white;
-            }
-
-            .proof-container .int-link-external::after, .information-container .int-link-external::after {
-                filter: invert(100%);
-                -webkit-filter: invert(100%);
-            }
-
-            .left-container h3, .proof-container h4, .information-container h4 {
-                margin: 0px 0px 10px 0px;
-            }
-
-            .left-container {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                padding: 40px 10px;
-                justify-content: space-evenly;
             }
 
             .content-wrapper {
@@ -335,28 +278,6 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                 margin-bottom: 0.2rem;
             }
 
-            .vc-loading {
-                font-size: 1.3rem;
-            }
-
-            .reload-failed {
-                width: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin-bottom: 1em;
-            }
-
-            .reload-failed p {
-                color: var(--dbp-danger-bg-color);
-                margin-top: 0px;
-                margin-bottom: 0px;
-            }
-
-            #reload-btn {
-                margin-left: 10px;
-            }
-
             .hidden {
                 display: none;
             }
@@ -371,7 +292,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                     max-height: unset;
                 }
 
-                #vc-modal-content, #ticket-modal-content > div:first-of-type, .content-wrapper {
+                #vc-modal-content > div:first-of-type, .content-wrapper {
                     height: 100%;
                 }
 
@@ -421,15 +342,6 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                     grid-gap: inherit;
                     min-height: 100vh;
                 }
-
-                .proof-container, .information-container {
-                    padding: 12px 20px 20px 20px;
-                    flex-grow: 1;
-                }
-
-                .reload-failed {
-                    width: 90%;
-                }
             }
         `;
     }
@@ -438,14 +350,6 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         const i18n = this._i18n;
 
         const canPaste = navigator.clipboard['readText'] !== undefined;
-
-        const loading = html`
-            <span class="control ${classMap({hidden: !this.loading})}">
-                <span class="loading">
-                    <dbp-mini-spinner text=${i18n.t('loading-message')}></dbp-mini-spinner>
-                </span>
-            </span>
-        `;
 
         return html`
 
@@ -471,12 +375,12 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                     </div>
                     <div class="btn-box">
                         <span class="btn-box-label">${i18n.t('fetch-your-vc')}</span>
-                        <button @click="${this.copyFromClipboard}" ?disabled="${!canPaste}">${i18n.t('fetch-your-vc-clipboard')}</button>
-                        <button @click="${this.retrieveVC}">wallet</button>
+                        <button class="button is-secondary" @click="${this.copyFromClipboard}" ?disabled="${!canPaste}">${i18n.t('fetch-your-vc-clipboard')}</button>
+                        <button class="button is-secondary" @click="${this.retrieveVC}">wallet</button>
                     </div>
                     <div class="control vc-select ${classMap({hidden: this.diplomas.length<2})}">
-                        <select name="diploma_index" id="diplomas" @change="${() => this.selectDiploma()}" style="width:100%">
-                            ${this.diplomas.map((item) => html`<option value="${item.id || item.credentialSubject.id}">${item.studyProgram || item.credentialSubject.studyProgram}</option>`)}
+                        <select name="diploma_index" id="diplomas" @change="${this.selectDiploma}" style="width:100%">
+                            ${this.diplomas.map(item => html`<option value="${item.id}">${item.credentialSubject.studyProgram}</option>`)}
                         </select> 
                     </div>
                     <div class="vc-text">
@@ -484,12 +388,19 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                     </div>
                     <div class="btn">
                         <dbp-loading-button type="is-primary" id="vc-btn" value="${i18n.t('upload-btn-text')}"
-                                            @click="${() => {this.verifyVC();}}"
+                                            @click="${this.verifyVC}"
                                             title="${i18n.t('upload-btn-text')}"></dbp-loading-button>
                     </div>
                     <div class="response">
                         <span>${i18n.t('response-other-diploma')}</span>
-                        ${this.loading ? loading : html`
+                        ${this.loading ?
+                        html`
+                        <span class="control ${classMap({hidden: !this.loading})}">
+                            <span class="loading">
+                                <dbp-mini-spinner text=${i18n.t('loading-message')}></dbp-mini-spinner>
+                            </span>
+                        </span>` :
+                        html`
                         <span class="verify-${this.status}">${i18n.t('response-other-diploma-' + this.status + '-text')}</span>
                         `}
                     </div>

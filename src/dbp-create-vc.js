@@ -3,7 +3,7 @@ import {css, html} from 'lit-element';
 import DBPEducredLitElement from "./dbp-educred-lit-element";
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from '@dbp-toolkit/common/utils';
-import {LoadingButton, Icon, MiniSpinner, InlineNotification} from '@dbp-toolkit/common';
+import {Icon, InlineNotification, LoadingButton, MiniSpinner} from '@dbp-toolkit/common';
 import {classMap} from 'lit-html/directives/class-map.js';
 import MicroModal from './micromodal.es';
 import * as commonStyles from '@dbp-toolkit/common/styles';
@@ -185,7 +185,7 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
     }
 
     /**
-     * Get a list of active tickets and checks the response of the request
+     * Get a list of active diplomas and checks the response of the request
      *
      */
     async getListOfDiplomas() {
@@ -366,49 +366,6 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                 column-gap: 0.5em;
             }
 
-            #diploma-modal-box {
-                display: flex;
-                flex-direction: column;
-                padding: 0px;
-                min-width: 700px;
-                max-width: 880px;
-                min-height: unset;
-                height: auto;
-            }
-
-            .proof-container, .information-container {
-                background-color: var(--dbp-info-bg-color);
-                color: var(--dbp-info-text-color);
-                padding: 40px 10px;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-evenly;
-                align-items: center;
-                text-align: center;
-            }
-
-            .proof-container {
-                text-align: center;
-            }
-
-            .proof-container .int-link-external, .proof-container .int-link-internal, .information-container .int-link-internal {
-                border-bottom: 1px solid white;
-            }
-
-            .proof-container .int-link-external::after {
-                filter: invert(100%);
-                -webkit-filter: invert(100%);
-            }
-
-            .foto-container {
-                width: 80%;
-            }
-
-            .left-container h3, .proof-container h4, .information-container h4 {
-                margin: 0px 0px 10px 0px;
-                line-height: 30px;
-            }
-
             .left-container {
                 display: flex;
                 flex-direction: column;
@@ -431,24 +388,8 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                 top: 5px;
             }
 
-            .red {
-                color: var(--dbp-danger-bg-color);
-            }
-
-            .green {
-                color: var(--dbp-success-bg-color);
-            }
-
-            .warning {
-                color: var(--dbp-info-bg-color);
-            }
-
             .diploma h3 {
                 margin-bottom: 0.2rem;
-            }
-
-            .diploma-loading {
-                font-size: 1.3rem;
             }
 
             .flex {
@@ -459,24 +400,6 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                 justify-content: center;
             }
 
-            .reload-failed {
-                width: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin-bottom: 1em;
-            }
-
-            .reload-failed p {
-                color: var(--dbp-danger-bg-color);
-                margin-top: 0px;
-                margin-bottom: 0px;
-            }
-
-            #reload-btn {
-                margin-left: 10px;
-            }
-
             .hidden {
                 display: none;
             }
@@ -484,12 +407,6 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
             @media only screen
             and (orientation: landscape)
             and (max-width: 768px) {
-                #diploma-modal-box {
-                    height: 100%;
-                    width: 100%;
-                    max-width: unset;
-                    max-heigth: unset;
-                }
 
                 #diploma-modal-content, #diploma-modal-content > div:first-of-type, .content-wrapper, #qr-code-hash svg {
                     height: 100%;
@@ -497,10 +414,6 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
 
                 .left-container, .proof-container, .information-container {
                     justify-content: space-evenly;
-                }
-                
-                #qr-code-wrapper {
-                    width: 80%;
                 }
                 
             }
@@ -531,14 +444,6 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                     justify-content: center;
                 }
 
-                #diploma-modal-box {
-                    width: 100%;
-                    height: 100%;
-                    min-width: 100%;
-                    min-height: 100%;
-                    padding: 0px;
-                }
-
                 .left-container {
                     padding: 11px 20px 20px 20px;
                 }
@@ -550,15 +455,6 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                     grid-gap: inherit;
                     min-height: 100vh;
                 }
-
-                .proof-container, .information-container {
-                    padding: 12px 20px 20px 20px;
-                    flex-grow: 1;
-                }
-
-                .reload-failed {
-                    width: 90%;
-                }
             }
         `;
     }
@@ -566,16 +462,6 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
 
     render() {
         const i18n = this._i18n;
-
-        const loading = html`
-            <span class="control ${classMap({hidden: !this.loading})}">
-                            <span class="loading">
-                                <dbp-mini-spinner text=${i18n.t('loading-message')}></dbp-mini-spinner>
-                            </span>
-                        </span>
-        `;
-
-        const noDiplomas = this.diplomas.length === 0 ? html`<p>sorry, you have no diplomas jet</p>` : '';
 
         return html`
 
@@ -598,7 +484,7 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                     <div>
                         <label for="did">DID:</label>
                         <input type="text" name="did" id="did" size="64" value="${this.did}">
-                        <button @click="${this.getDID}">get from wallet</button>
+                        <button class="button is-secondary" @click="${this.getDID}">get from wallet</button>
                     </div>
                     <div>
                         <label for="format">JWT:</label>
@@ -614,39 +500,39 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                                         <b>${diploma.educationalLevel}</b> ${i18n.t('from')} ${diploma.validFrom.substr(0, 10)}
                                     </span>
                                     <span>id = ${diploma['@id']}</span>
-                                    <button @click="${this.getVC}" data-diplomaID="${diploma['@id']}">export</button>
+                                    <button class="button is-secondary" @click="${this.getVC}" data-diplomaID="${diploma['@id']}">export</button>
                                 </span>
                             </div>
                         `)}
                         </div>
-                        ${noDiplomas}
-                        ${loading}
+                        ${this.diplomas.length === 0 ? html`<p>sorry, you have no diplomas jet</p>` : ''}
                     </div>
                 </div>
                 <div class="modal micromodal-slide" id="show-diploma-modal" aria-hidden="true" style="display: ${this.showVc ? 'block' : 'none'}">
                     <div class="modal-overlay" tabindex="-2" data-micromodal-close>
-                        <div class="modal-container" id="ticket-modal-box" role="dialog" aria-modal="true"
-                            aria-labelledby="ticket-modal-title">
-                            <main class="modal-content" id="ticket-modal-content">
-                                <span class="control ticket-loading ${classMap({hidden: this.showVc})}">
+                        <div class="modal-container" id="diploma-modal-box" role="dialog" aria-modal="true"
+                            aria-labelledby="diploma-modal-title">
+                            <main class="modal-content" id="diploma-modal-content">
+                                <span class="control diploma-loading ${classMap({hidden: this.showVc})}">
                                     <span class="loading">
-                                        <dbp-mini-spinner text=${i18n.t('show-active-tickets.loading-message-ticket')}></dbp-mini-spinner>
+                                        <dbp-mini-spinner text=${i18n.t('loading-message')}></dbp-mini-spinner>
                                     </span>
                                 </span>
-${Object.keys(this.currentDiploma).length > 0 ? html`
+                                ${Object.keys(this.currentDiploma).length > 0 ?
+                                html`
                                 <div class="content-wrapper">
                                     <div class="left-container">
-                                         <h3 id="ticket-modal-title">
+                                         <h3 id="diploma-modal-title">
                                             ${this.currentDiploma.name}
                                          </h3>
                                         <textarea style="width:100%" rows="12" readonly wrap="soft">${this.currentDiploma.text}</textarea>
                                         <div class="btn-box">
                                             <span class="btn-box-label">${i18n.t('transfer-your-vc')}</span>
-                                            <button @click="${this.copyToClipboard}">${i18n.t('transfer-your-vc-clipboard')}</button>
-                                            <button @click="${this.saveVC}" ?disabled="${this._('#format').checked}">${i18n.t('transfer-your-vc-wallet')}</button>
+                                            <button class="button is-secondary" @click="${this.copyToClipboard}">${i18n.t('transfer-your-vc-clipboard')}</button>
+                                            <button class="button is-secondary" @click="${this.saveVC}" ?disabled="${this._('#format').checked}">${i18n.t('transfer-your-vc-wallet')}</button>
                                         </div>
                                     </div>
-                                    <button title="Close" class="modal-close" aria-label="Close modal" @click="${() => {this.closeDialog();}}">
+                                    <button title="Close" class="modal-close" aria-label="Close modal" @click="${this.closeDialog}">
                                         <dbp-icon title="${i18n.t('file-sink.modal-close')}" name="close" class="close-icon"></dbp-icon>
                                     </button>
                                 </div>` : ''}
