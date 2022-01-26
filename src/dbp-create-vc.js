@@ -1,6 +1,6 @@
 import {createInstance} from './i18n.js';
 import {css, html} from 'lit';
-import DBPEducredLitElement from "./dbp-educred-lit-element";
+import DBPEducredLitElement from './dbp-educred-lit-element';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import {Icon, InlineNotification, LoadingButton, MiniSpinner} from '@dbp-toolkit/common';
@@ -9,8 +9,8 @@ import MicroModal from './micromodal.es';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 //import {send} from "@dbp-toolkit/common/notification";
 import {InfoTooltip} from '@dbp-toolkit/tooltip';
-import {Activity} from "./activity";
-import metadata from "./dbp-create-vc.metadata.json";
+import {Activity} from './activity';
+import metadata from './dbp-create-vc.metadata.json';
 import * as polyfill from 'credential-handler-polyfill';
 
 class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
@@ -28,7 +28,7 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
         this.loadingDiplomas = true;
         this.showVc = false;
 
-        polyfill.loadOnce().then(x => console.log('Ready to work with credentials!'));
+        polyfill.loadOnce().then((x) => console.log('Ready to work with credentials!'));
     }
 
     static get scopedElements() {
@@ -59,7 +59,7 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
     update(changedProperties) {
         changedProperties.forEach((oldValue, propName) => {
             switch (propName) {
-                case "lang":
+                case 'lang':
                     this._i18n.changeLanguage(this.lang);
                     break;
             }
@@ -102,16 +102,18 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
      * @returns {object} response
      */
     async getDiplomaRequest(diplomaID) {
-
         const options = {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/ld+json',
-                Authorization: "Bearer " + this.auth.token
+                Authorization: 'Bearer ' + this.auth.token,
             },
         };
 
-        return await this.httpGetAsync(this.entryPointUrl + '/educationalcredentials/diplomas/' + diplomaID, options);
+        return await this.httpGetAsync(
+            this.entryPointUrl + '/educationalcredentials/diplomas/' + diplomaID,
+            options
+        );
     }
 
     /**
@@ -122,7 +124,6 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
      * @returns {object} response
      */
     async getVCRequest(diplomaID, format) {
-
         const vars = {
             did: this.did,
             format: format ? 'jsonldjwt' : '',
@@ -131,11 +132,14 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/ld+json',
-                Authorization: "Bearer " + this.auth.token
+                Authorization: 'Bearer ' + this.auth.token,
             },
             body: JSON.stringify(vars),
         };
-        return await this.httpGetAsync(this.entryPointUrl + '/educationalcredentials/diplomas/' + diplomaID + '/verifiable', options);
+        return await this.httpGetAsync(
+            this.entryPointUrl + '/educationalcredentials/diplomas/' + diplomaID + '/verifiable',
+            options
+        );
     }
 
     async getVC(event) {
@@ -177,11 +181,14 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/ld+json',
-                Authorization: "Bearer " + this.auth.token
+                Authorization: 'Bearer ' + this.auth.token,
             },
         };
 
-        return await this.httpGetAsync(this.entryPointUrl + '/educationalcredentials/diplomas', options);
+        return await this.httpGetAsync(
+            this.entryPointUrl + '/educationalcredentials/diplomas',
+            options
+        );
     }
 
     /**
@@ -210,7 +217,7 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
             this.diplomas = this.parseDiplomas(responseBody);
         } else {
             // else it failed, but we want to fail soft
-            console.log("Loading diplomas has failed");
+            console.log('Loading diplomas has failed');
         }
         this.loadingDiplomas = false;
         this.loading = false;
@@ -223,11 +230,11 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
     openDialog() {
         if (this._('#show-diploma-modal'))
             MicroModal.show(this._('#show-diploma-modal'), {
-            disableScroll: true,
-            onClose: modal => {
-                this.showVc = false;
-            },
-        });
+                disableScroll: true,
+                onClose: (modal) => {
+                    this.showVc = false;
+                },
+            });
     }
 
     /**
@@ -235,41 +242,43 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
      *
      */
     closeDialog() {
-        if (this._('#show-diploma-modal'))
-            MicroModal.close(this._('#show-diploma-modal'));
+        if (this._('#show-diploma-modal')) MicroModal.close(this._('#show-diploma-modal'));
     }
 
     copyToClipboard() {
         const text = this.currentDiploma.text;
-        navigator.clipboard.writeText(text).then(function() {
-            console.log('Async: Copying to clipboard was successful!');
-        }, function(err) {
-            console.error('Async: Could not copy text: ', err);
-        });
+        navigator.clipboard.writeText(text).then(
+            function () {
+                console.log('Async: Copying to clipboard was successful!');
+            },
+            function (err) {
+                console.error('Async: Could not copy text: ', err);
+            }
+        );
     }
 
     /* experimental wallet integration */
     uuidv4() {
-        return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-            (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+        return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+            (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
         );
     }
 
     getDID() {
         const credentialQuery = {
-            "web": {
-                "VerifiablePresentation": {
-                    "challenge": this.uuidv4(),
-                    "domain": window.location.hostname,
-                    "query": {
-                        "type": "DIDAuth"
-                    }
-                }
-            }
+            web: {
+                VerifiablePresentation: {
+                    challenge: this.uuidv4(),
+                    domain: window.location.hostname,
+                    query: {
+                        type: 'DIDAuth',
+                    },
+                },
+            },
         };
-        console.log("Requesting DID...");
-        navigator.credentials.get(credentialQuery).then(result => {
-            console.log("Result of get() request:");
+        console.log('Requesting DID...');
+        navigator.credentials.get(credentialQuery).then((result) => {
+            console.log('Result of get() request:');
             console.dir(result);
             this.did = result.data.holder ?? '';
         });
@@ -278,20 +287,20 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
     saveVC() {
         const chapiVerifiableCredential = JSON.parse(this.currentDiploma.text);
         const chapiVerifiablePresentation = {
-            "@context": [
+            '@context': [
                 'https://www.w3.org/2018/credentials/v1',
                 'https://wicket1001.github.io/ebsi4austria-examples/context/essif-schemas-vc-2020-v2.jsonld',
             ],
-            "type": [
-                "VerifiablePresentation"
-            ],
-            "holder": chapiVerifiableCredential.credentialSubject.id,
-            "verifiableCredential": [ chapiVerifiableCredential ]
+            type: ['VerifiablePresentation'],
+            holder: chapiVerifiableCredential.credentialSubject.id,
+            verifiableCredential: [chapiVerifiableCredential],
         };
-        const webCredentialWrapper = new polyfill.WebCredential('VerifiablePresentation',
-            chapiVerifiablePresentation);
-        console.log("Storing credential...");
-        navigator.credentials.store(webCredentialWrapper).then(result => {
+        const webCredentialWrapper = new polyfill.WebCredential(
+            'VerifiablePresentation',
+            chapiVerifiablePresentation
+        );
+        console.log('Storing credential...');
+        navigator.credentials.store(webCredentialWrapper).then((result) => {
             console.log('Result of store() request:');
             console.dir(result);
         });
@@ -299,29 +308,28 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
 
     retrieveVC() {
         const credentialQuery = {
-            "web": {
-                "VerifiablePresentation": {
-                    "challenge": this.uuidv4(),
-                    "domain": window.location.hostname,
-                    "query": [{
-                        "type": "QueryByExample",
-                        "credentialQuery": {
-                            "reason": "Please present a Verifiable Credential.",
-                            "example": {
-                                "@context": [
-                                    "https://www.w3.org/2018/credentials/v1"
-                                ],
-                                "type": ["VerifiableCredential"]
-                            }
+            web: {
+                VerifiablePresentation: {
+                    challenge: this.uuidv4(),
+                    domain: window.location.hostname,
+                    query: [
+                        {
+                            type: 'QueryByExample',
+                            credentialQuery: {
+                                reason: 'Please present a Verifiable Credential.',
+                                example: {
+                                    '@context': ['https://www.w3.org/2018/credentials/v1'],
+                                    type: ['VerifiableCredential'],
+                                },
+                            },
                         },
-                    }]
-                }
-            }
+                    ],
+                },
+            },
         };
-        console.log("Requesting credential...");
-        navigator.credentials.get(credentialQuery).then(result => {
-            console.log("Result of get() request:", JSON.stringify(result, null, 2));
-
+        console.log('Requesting credential...');
+        navigator.credentials.get(credentialQuery).then((result) => {
+            console.log('Result of get() request:', JSON.stringify(result, null, 2));
         });
     }
     /* ------------------------------- */
@@ -404,24 +412,22 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                 display: none;
             }
 
-            @media only screen
-            and (orientation: landscape)
-            and (max-width: 768px) {
-
-                #diploma-modal-content, #diploma-modal-content > div:first-of-type, .content-wrapper, #qr-code-hash svg {
+            @media only screen and (orientation: landscape) and (max-width: 768px) {
+                #diploma-modal-content,
+                #diploma-modal-content > div:first-of-type,
+                .content-wrapper,
+                #qr-code-hash svg {
                     height: 100%;
                 }
 
-                .left-container, .proof-container, .information-container {
+                .left-container,
+                .proof-container,
+                .information-container {
                     justify-content: space-evenly;
                 }
-                
             }
 
-            @media only screen
-            and (orientation: portrait)
-            and (max-width: 768px) {
-
+            @media only screen and (orientation: portrait) and (max-width: 768px) {
                 .diploma {
                     display: block;
                     margin-bottom: 0;
@@ -459,88 +465,147 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
         `;
     }
 
-
     render() {
         const i18n = this._i18n;
 
         return html`
-
-            <div class="notification is-warning ${classMap({hidden: this.isLoggedIn() || this.isLoading()})}">
+            <div
+                class="notification is-warning ${classMap({
+                    hidden: this.isLoggedIn() || this.isLoading(),
+                })}">
                 ${i18n.t('error-login-message')}
             </div>
 
-            ${!this.isLoggedIn() || !this.hasPermissions() ? 
-            html`
-                <div class="notification is-danger ${classMap({hidden: !this.hasPermissions() || !this.isLoggedIn() || this.isLoading()})}">
-                    ${i18n.t('error-permission-message')}
-                </div>` :
-            html`
-                <div>
-                    <h2>${this.activity.getName(this.lang)}</h2>
-                    <p class="subheadline">
-                        ${this.activity.getDescription(this.lang)}
-                    </p>
+            ${!this.isLoggedIn() || !this.hasPermissions()
+                ? html` <div
+                      class="notification is-danger ${classMap({
+                          hidden: !this.hasPermissions() || !this.isLoggedIn() || this.isLoading(),
+                      })}">
+                      ${i18n.t('error-permission-message')}
+                  </div>`
+                : html`
+                      <div>
+                          <h2>${this.activity.getName(this.lang)}</h2>
+                          <p class="subheadline">${this.activity.getDescription(this.lang)}</p>
 
-                    <div>
-                        <label for="did">DID:</label>
-                        <input type="text" name="did" id="did" size="64" value="${this.did}">
-                        <button class="button is-secondary" @click="${this.getDID}">get from wallet</button>
-                    </div>
-                    <div>
-                        <label for="format">JWT:</label>
-                        <input type="checkbox" name="format" id="format" value="1">
-                    </div>
-                    <div class="diplomas">
-                        <div>
-                        ${this.diplomas.map(diploma => html`
-                            <div class="diploma">
-                                <span class="header">
-                                    <h3>${diploma.name}</h3>
-                                    <span>
-                                        <b>${diploma.educationalLevel}</b> ${i18n.t('from')} ${diploma.validFrom.substr(0, 10)}
-                                    </span>
-                                    <span>id = ${diploma['@id']}</span>
-                                    <button class="button is-secondary" @click="${this.getVC}" data-diplomaID="${diploma['@id']}">export</button>
-                                </span>
-                            </div>
-                        `)}
-                        </div>
-                        ${this.diplomas.length === 0 ? html`<p>sorry, you have no diplomas jet</p>` : ''}
-                    </div>
-                </div>
-                <div class="modal micromodal-slide" id="show-diploma-modal" aria-hidden="true" style="display: ${this.showVc ? 'block' : 'none'}">
-                    <div class="modal-overlay" tabindex="-2" data-micromodal-close>
-                        <div class="modal-container" id="diploma-modal-box" role="dialog" aria-modal="true"
-                            aria-labelledby="diploma-modal-title">
-                            <main class="modal-content" id="diploma-modal-content">
-                                <span class="control diploma-loading ${classMap({hidden: this.showVc})}">
-                                    <span class="loading">
-                                        <dbp-mini-spinner text=${i18n.t('loading-message')}></dbp-mini-spinner>
-                                    </span>
-                                </span>
-                                ${Object.keys(this.currentDiploma).length > 0 ?
-                                html`
-                                <div class="content-wrapper">
-                                    <div class="left-container">
-                                         <h3 id="diploma-modal-title">
-                                            ${this.currentDiploma.name}
-                                         </h3>
-                                        <textarea style="width:100%" rows="12" readonly wrap="soft">${this.currentDiploma.text}</textarea>
-                                        <div class="btn-box">
-                                            <span class="btn-box-label">${i18n.t('transfer-your-vc')}</span>
-                                            <button class="button is-secondary" @click="${this.copyToClipboard}">${i18n.t('transfer-your-vc-clipboard')}</button>
-                                            <button class="button is-secondary" @click="${this.saveVC}" ?disabled="${this._('#format').checked}">${i18n.t('transfer-your-vc-wallet')}</button>
-                                        </div>
-                                    </div>
-                                    <button title="Close" class="modal-close" aria-label="Close modal" @click="${this.closeDialog}">
-                                        <dbp-icon title="${i18n.t('file-sink.modal-close')}" name="close" class="close-icon"></dbp-icon>
-                                    </button>
-                                </div>` : ''}
-                            </main>
-                        </div>
-                    </div>
-                </div>
-            `}
+                          <div>
+                              <label for="did">DID:</label>
+                              <input
+                                  type="text"
+                                  name="did"
+                                  id="did"
+                                  size="64"
+                                  value="${this.did}" />
+                              <button class="button is-secondary" @click="${this.getDID}">
+                                  get from wallet
+                              </button>
+                          </div>
+                          <div>
+                              <label for="format">JWT:</label>
+                              <input type="checkbox" name="format" id="format" value="1" />
+                          </div>
+                          <div class="diplomas">
+                              <div>
+                                  ${this.diplomas.map(
+                                      (diploma) => html`
+                                          <div class="diploma">
+                                              <span class="header">
+                                                  <h3>${diploma.name}</h3>
+                                                  <span>
+                                                      <b>${diploma.educationalLevel}</b> ${i18n.t(
+                                                          'from'
+                                                      )}
+                                                      ${diploma.validFrom.substr(0, 10)}
+                                                  </span>
+                                                  <span>id = ${diploma['@id']}</span>
+                                                  <button
+                                                      class="button is-secondary"
+                                                      @click="${this.getVC}"
+                                                      data-diplomaID="${diploma['@id']}">
+                                                      export
+                                                  </button>
+                                              </span>
+                                          </div>
+                                      `
+                                  )}
+                              </div>
+                              ${this.diplomas.length === 0
+                                  ? html`<p>sorry, you have no diplomas jet</p>`
+                                  : ''}
+                          </div>
+                      </div>
+                      <div
+                          class="modal micromodal-slide"
+                          id="show-diploma-modal"
+                          aria-hidden="true"
+                          style="display: ${this.showVc ? 'block' : 'none'}">
+                          <div class="modal-overlay" tabindex="-2" data-micromodal-close>
+                              <div
+                                  class="modal-container"
+                                  id="diploma-modal-box"
+                                  role="dialog"
+                                  aria-modal="true"
+                                  aria-labelledby="diploma-modal-title">
+                                  <main class="modal-content" id="diploma-modal-content">
+                                      <span
+                                          class="control diploma-loading ${classMap({
+                                              hidden: this.showVc,
+                                          })}">
+                                          <span class="loading">
+                                              <dbp-mini-spinner
+                                                  text=${i18n.t(
+                                                      'loading-message'
+                                                  )}></dbp-mini-spinner>
+                                          </span>
+                                      </span>
+                                      ${Object.keys(this.currentDiploma).length > 0
+                                          ? html` <div class="content-wrapper">
+                                                <div class="left-container">
+                                                    <h3 id="diploma-modal-title">
+                                                        ${this.currentDiploma.name}
+                                                    </h3>
+                                                    <textarea
+                                                        style="width:100%"
+                                                        rows="12"
+                                                        readonly
+                                                        wrap="soft">
+${this.currentDiploma.text}</textarea
+                                                    >
+                                                    <div class="btn-box">
+                                                        <span class="btn-box-label"
+                                                            >${i18n.t('transfer-your-vc')}</span
+                                                        >
+                                                        <button
+                                                            class="button is-secondary"
+                                                            @click="${this.copyToClipboard}">
+                                                            ${i18n.t('transfer-your-vc-clipboard')}
+                                                        </button>
+                                                        <button
+                                                            class="button is-secondary"
+                                                            @click="${this.saveVC}"
+                                                            ?disabled="${this._('#format')
+                                                                .checked}">
+                                                            ${i18n.t('transfer-your-vc-wallet')}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    title="Close"
+                                                    class="modal-close"
+                                                    aria-label="Close modal"
+                                                    @click="${this.closeDialog}">
+                                                    <dbp-icon
+                                                        title="${i18n.t('file-sink.modal-close')}"
+                                                        name="close"
+                                                        class="close-icon"></dbp-icon>
+                                                </button>
+                                            </div>`
+                                          : ''}
+                                  </main>
+                              </div>
+                          </div>
+                      </div>
+                  `}
         `;
     }
 }
