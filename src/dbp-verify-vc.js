@@ -1,14 +1,14 @@
 import {createInstance} from './i18n.js';
 import {css, html} from 'lit';
-import DBPEducredLitElement from "./dbp-educred-lit-element";
+import DBPEducredLitElement from './dbp-educred-lit-element';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import {Activity} from './activity.js';
 import metadata from './dbp-create-vc.metadata.json';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import {classMap} from 'lit/directives/class-map.js';
-import {Icon, LoadingButton, MiniSpinner} from "@dbp-toolkit/common";
-import * as polyfill from "credential-handler-polyfill";
+import {Icon, LoadingButton, MiniSpinner} from '@dbp-toolkit/common';
+import * as polyfill from 'credential-handler-polyfill';
 // import {send} from "@dbp-toolkit/common/notification";
 
 class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
@@ -23,7 +23,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         this.status = 0;
         this.diplomas = [];
 
-        polyfill.loadOnce().then(x => console.log('Ready to work with credentials!'));
+        polyfill.loadOnce().then((x) => console.log('Ready to work with credentials!'));
     }
 
     static get scopedElements() {
@@ -42,14 +42,14 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
             loading: {type: Boolean, attribute: false},
             id: {type: String, attribute: false},
             diploma: {type: Object, attribute: false},
-            status: {type: Number, attribute: false}
+            status: {type: Number, attribute: false},
         };
     }
 
     update(changedProperties) {
         changedProperties.forEach((oldValue, propName) => {
             switch (propName) {
-                case "lang":
+                case 'lang':
                     this._i18n.changeLanguage(this.lang);
                     break;
             }
@@ -65,12 +65,15 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
             method: 'POST',
             headers: {
                 //'Content-Type': 'application/ld+json',
-                Authorization: "Bearer " + this.auth.token
+                Authorization: 'Bearer ' + this.auth.token,
             },
-            body: formData
+            body: formData,
         };
 
-        return await this.httpGetAsync(this.entryPointUrl + '/educationalcredentials/diplomas', options);
+        return await this.httpGetAsync(
+            this.entryPointUrl + '/educationalcredentials/diplomas',
+            options
+        );
     }
 
     async verifyVC() {
@@ -92,36 +95,36 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
 
     copyFromClipboard() {
         navigator.clipboard.readText().then(
-            text => {
+            (text) => {
                 this._('#vc-text').value = text;
                 console.log('Async: Copying from clipboard was successful!');
             },
-            err => console.error('Async: Could not copy from clipboard. error: ', err)
+            (err) => console.error('Async: Could not copy from clipboard. error: ', err)
         );
     }
 
     /* experimental wallet integration */
     uuidv4() {
-        return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-            (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+        return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+            (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
         );
     }
 
     getDID() {
         const credentialQuery = {
-            "web": {
-                "VerifiablePresentation": {
-                    "challenge": this.uuidv4(),
-                    "domain": window.location.hostname,
-                    "query": {
-                        "type": "DIDAuth"
-                    }
-                }
-            }
+            web: {
+                VerifiablePresentation: {
+                    challenge: this.uuidv4(),
+                    domain: window.location.hostname,
+                    query: {
+                        type: 'DIDAuth',
+                    },
+                },
+            },
         };
-        console.log("Requesting DID...");
-        navigator.credentials.get(credentialQuery).then(result => {
-            console.log("Result of get() request:");
+        console.log('Requesting DID...');
+        navigator.credentials.get(credentialQuery).then((result) => {
+            console.log('Result of get() request:');
             console.dir(result);
             this.did = result.data.holder ?? '';
         });
@@ -130,19 +133,17 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
     saveVC() {
         const chapiVerifiableCredential = JSON.parse(this.currentDiploma.text);
         const chapiVerifiablePresentation = {
-            "@context": [
-                "https://www.w3.org/2018/credentials/v1"
-            ],
-            "type": [
-                "VerifiablePresentation"
-            ],
-            "holder": chapiVerifiableCredential.credentialSubject.id,
-            "verifiableCredential": [ chapiVerifiableCredential ]
+            '@context': ['https://www.w3.org/2018/credentials/v1'],
+            type: ['VerifiablePresentation'],
+            holder: chapiVerifiableCredential.credentialSubject.id,
+            verifiableCredential: [chapiVerifiableCredential],
         };
-        const webCredentialWrapper = new polyfill.WebCredential('VerifiablePresentation',
-            chapiVerifiablePresentation);
-        console.log("Storing credential...");
-        navigator.credentials.store(webCredentialWrapper).then(result => {
+        const webCredentialWrapper = new polyfill.WebCredential(
+            'VerifiablePresentation',
+            chapiVerifiablePresentation
+        );
+        console.log('Storing credential...');
+        navigator.credentials.store(webCredentialWrapper).then((result) => {
             console.log('Result of store() request:');
             console.dir(result);
         });
@@ -150,34 +151,36 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
 
     retrieveVC() {
         const credentialQuery = {
-            "web": {
-                "VerifiablePresentation": {
-                    "challenge": this.uuidv4(),
-                    "domain": window.location.hostname,
-                    "query": [{
-                        "type": "QueryByExample",
-                        "credentialQuery": {
-                            "reason": "Please present a Verifiable Credential.",
-                            "example": {
-                                "@context": [
-                                    'https://www.w3.org/2018/credentials/v1',
-                                    'https://wicket1001.github.io/ebsi4austria-examples/context/essif-schemas-vc-2020-v2.jsonld',
-                                ],
-                                "type": ["VerifiableCredential"]
-                            }
+            web: {
+                VerifiablePresentation: {
+                    challenge: this.uuidv4(),
+                    domain: window.location.hostname,
+                    query: [
+                        {
+                            type: 'QueryByExample',
+                            credentialQuery: {
+                                reason: 'Please present a Verifiable Credential.',
+                                example: {
+                                    '@context': [
+                                        'https://www.w3.org/2018/credentials/v1',
+                                        'https://wicket1001.github.io/ebsi4austria-examples/context/essif-schemas-vc-2020-v2.jsonld',
+                                    ],
+                                    type: ['VerifiableCredential'],
+                                },
+                            },
                         },
-                    }]
-                }
-            }
+                    ],
+                },
+            },
         };
-        console.log("Requesting credential...");
-        navigator.credentials.get(credentialQuery).then(result => {
+        console.log('Requesting credential...');
+        navigator.credentials.get(credentialQuery).then((result) => {
             //console.log("Result of get() request:");
             //console.dir(result);
             this.diplomas = result.data.verifiableCredential;
             //console.dir(this.diplomas);
             this.diploma = this.diplomas[0];
-            this._('#vc-text').value =  JSON.stringify(this.diploma, null,2);
+            this._('#vc-text').value = JSON.stringify(this.diploma, null, 2);
         });
     }
     /* ------------------------------- */
@@ -185,11 +188,11 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
     selectDiploma() {
         const selected = this._('#diplomas').value;
         console.log('selected: ' + selected);
-        this.diplomas.forEach(item => {
-           if (selected === item.id || selected === item.credentialSubject.id) {
-               this.diploma = item;
-               this._('#vc-text').value =  JSON.stringify(this.diploma, null,2);
-           }
+        this.diplomas.forEach((item) => {
+            if (selected === item.id || selected === item.credentialSubject.id) {
+                this.diploma = item;
+                this._('#vc-text').value = JSON.stringify(this.diploma, null, 2);
+            }
         });
     }
 
@@ -214,17 +217,17 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
             .vc-text textarea {
                 width: 100%;
             }
-            
+
             .vc-select {
                 width: 100%;
                 margin-top: 1rem;
             }
-            
+
             select:not(.select) {
                 background-size: 16px;
                 background-position-x: calc(100% - 0.4rem);
             }
-            
+
             .btn-box {
                 margin-top: 1.5rem;
             }
@@ -236,16 +239,14 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
             }
 
             .verify-0 {
-                
             }
             .verify-1 {
                 color: var(--dbp-success-bg-color);
-                
             }
             .verify-90 {
                 color: var(--dbp-danger-bg-color);
             }
-            
+
             #vc-modal-box {
                 display: flex;
                 flex-direction: column;
@@ -282,9 +283,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                 display: none;
             }
 
-            @media only screen
-            and (orientation: landscape)
-            and (max-width: 768px) {
+            @media only screen and (orientation: landscape) and (max-width: 768px) {
                 #vc-modal-box {
                     height: 100%;
                     width: 100%;
@@ -292,19 +291,19 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                     max-height: unset;
                 }
 
-                #vc-modal-content > div:first-of-type, .content-wrapper {
+                #vc-modal-content > div:first-of-type,
+                .content-wrapper {
                     height: 100%;
                 }
 
-                .left-container, .proof-container, .information-container {
+                .left-container,
+                .proof-container,
+                .information-container {
                     justify-content: space-evenly;
                 }
             }
 
-            @media only screen
-            and (orientation: portrait)
-            and (max-width: 768px) {
-
+            @media only screen and (orientation: portrait) and (max-width: 768px) {
                 .vc {
                     display: block;
                     margin-bottom: 0;
@@ -352,8 +351,10 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         const canPaste = navigator.clipboard['readText'] !== undefined;
 
         return html`
-
-            <div class="notification is-warning ${classMap({hidden: this.isLoggedIn() || this.isLoading()})}">
+            <div
+                class="notification is-warning ${classMap({
+                    hidden: this.isLoggedIn() || this.isLoading(),
+                })}">
                 ${i18n.t('error-login-message')}
             </div>
 
@@ -362,12 +363,14 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                     <dbp-mini-spinner text=${i18n.t('loading-message')}></dbp-mini-spinner>
                 </span>
             </div>
-            ${!this.isLoggedIn() || !this.hasPermissions() ?
-            html`
-                <div class="notification is-danger ${classMap({hidden: !this.hasPermissions() || !this.isLoggedIn() || this.isLoading()})}">
-                    ${i18n.t('error-permission-message')}
-                </div>` :
-            html`
+            ${!this.isLoggedIn() || !this.hasPermissions()
+                ? html` <div
+                      class="notification is-danger ${classMap({
+                          hidden: !this.hasPermissions() || !this.isLoggedIn() || this.isLoading(),
+                      })}">
+                      ${i18n.t('error-permission-message')}
+                  </div>`
+                : html`
                 <div class="vc">
                     <div class="header">
                         <h3>${i18n.t('upload-other-diploma')}</h3>
@@ -375,34 +378,55 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                     </div>
                     <div class="btn-box">
                         <span class="btn-box-label">${i18n.t('fetch-your-vc')}</span>
-                        <button class="button is-secondary" @click="${this.copyFromClipboard}" ?disabled="${!canPaste}">${i18n.t('fetch-your-vc-clipboard')}</button>
-                        <button class="button is-secondary" @click="${this.retrieveVC}">wallet</button>
+                        <button class="button is-secondary" @click="${
+                            this.copyFromClipboard
+                        }" ?disabled="${!canPaste}">${i18n.t('fetch-your-vc-clipboard')}</button>
+                        <button class="button is-secondary" @click="${
+                            this.retrieveVC
+                        }">wallet</button>
                     </div>
-                    <div class="control vc-select ${classMap({hidden: this.diplomas.length<2})}">
-                        <select name="diploma_index" id="diplomas" @change="${this.selectDiploma}" style="width:100%">
-                            ${this.diplomas.map(item => html`<option value="${item.id}">${item.credentialSubject.studyProgram}</option>`)}
+                    <div class="control vc-select ${classMap({hidden: this.diplomas.length < 2})}">
+                        <select name="diploma_index" id="diplomas" @change="${
+                            this.selectDiploma
+                        }" style="width:100%">
+                            ${this.diplomas.map(
+                                (item) =>
+                                    html`<option value="${item.id}">
+                                        ${item.credentialSubject.studyProgram}
+                                    </option>`
+                            )}
                         </select> 
                     </div>
                     <div class="vc-text">
                         <textarea name="text" id="vc-text" rows="12" wrap="soft"></textarea>
                     </div>
                     <div class="btn">
-                        <dbp-loading-button type="is-primary" id="vc-btn" value="${i18n.t('upload-btn-text')}"
+                        <dbp-loading-button type="is-primary" id="vc-btn" value="${i18n.t(
+                            'upload-btn-text'
+                        )}"
                                             @click="${this.verifyVC}"
-                                            title="${i18n.t('upload-btn-text')}"></dbp-loading-button>
+                                            title="${i18n.t(
+                                                'upload-btn-text'
+                                            )}"></dbp-loading-button>
                     </div>
                     <div class="response">
                         <span>${i18n.t('response-other-diploma')}</span>
-                        ${this.loading ?
-                        html`
-                        <span class="control ${classMap({hidden: !this.loading})}">
-                            <span class="loading">
-                                <dbp-mini-spinner text=${i18n.t('loading-message')}></dbp-mini-spinner>
-                            </span>
-                        </span>` :
-                        html`
-                        <span class="verify-${this.status}">${i18n.t('response-other-diploma-' + this.status + '-text')}</span>
-                        `}
+                        ${
+                            this.loading
+                                ? html` <span class="control ${classMap({hidden: !this.loading})}">
+                                      <span class="loading">
+                                          <dbp-mini-spinner
+                                              text=${i18n.t('loading-message')}></dbp-mini-spinner>
+                                      </span>
+                                  </span>`
+                                : html`
+                                      <span class="verify-${this.status}"
+                                          >${i18n.t(
+                                              'response-other-diploma-' + this.status + '-text'
+                                          )}</span
+                                      >
+                                  `
+                        }
                     </div>
                 </div>
             </div>

@@ -1,18 +1,18 @@
 {
-  "element": "dbp-create-vc",
-  "module_src": "dbp-create-vc.js",
-  "routing_name": "create-vc",
-  "name": {
-    "de": "Diplome exportieren",
-    "en": "Export diplomas"
-  },
-  "short_name": {
-    "de": "Diplome exportieren",
-    "en": "Export diplomas"
-  },
-  "description": {
-    "de": "Export der Diplome angemeldeter Benutzer*innen.",
-    "en": "Export diplomas for logged in users."
-  },
-  "subscribe": "lang,entry-point-url,auth,html-overrides,preselected-option"
+    "element": "dbp-create-vc",
+    "module_src": "dbp-create-vc.js",
+    "routing_name": "create-vc",
+    "name": {
+        "de": "Diplome exportieren",
+        "en": "Export diplomas"
+    },
+    "short_name": {
+        "de": "Diplome exportieren",
+        "en": "Export diplomas"
+    },
+    "description": {
+        "de": "Export der Diplome angemeldeter Benutzer*innen.",
+        "en": "Export diplomas for logged in users."
+    },
+    "subscribe": "lang,entry-point-url,auth,html-overrides,preselected-option"
 }

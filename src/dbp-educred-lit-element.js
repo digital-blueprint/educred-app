@@ -1,5 +1,5 @@
 import DBPLitElement from '@dbp-toolkit/common/dbp-lit-element';
-import {getStackTrace} from "@dbp-toolkit/common/error";
+import {getStackTrace} from '@dbp-toolkit/common/error';
 //import {send} from "@dbp-toolkit/common/notification";
 
 export default class DBPEducredLitElement extends DBPLitElement {
@@ -40,10 +40,13 @@ export default class DBPEducredLitElement extends DBPLitElement {
             const options = {
                 method: 'GET',
                 headers: {
-                    Authorization: "Bearer " + this.auth.token
+                    Authorization: 'Bearer ' + this.auth.token,
                 },
             };
-            let response = await this.httpGetAsync(this.entryPointUrl + '/base/people/' + encodeURIComponent(personId), options);
+            let response = await this.httpGetAsync(
+                this.entryPointUrl + '/base/people/' + encodeURIComponent(personId),
+                options
+            );
             this.person = await response.json();
             //console.dir(this.person);
         }
@@ -68,7 +71,7 @@ export default class DBPEducredLitElement extends DBPLitElement {
     update(changedProperties) {
         changedProperties.forEach((oldValue, propName) => {
             switch (propName) {
-                case "auth":
+                case 'auth':
                     this._updateAuth();
                     break;
             }
@@ -92,10 +95,9 @@ export default class DBPEducredLitElement extends DBPLitElement {
      * @returns {boolean} true or false
      */
     isLoading() {
-        if (this._loginStatus === "logged-out")
-            return false;
+        if (this._loginStatus === 'logged-out') return false;
 
-        return (!this.isLoggedIn() && this.auth.token !== undefined);
+        return !this.isLoggedIn() && this.auth.token !== undefined;
     }
 
     hasPermissions() {
@@ -120,14 +122,15 @@ export default class DBPEducredLitElement extends DBPLitElement {
      * @returns {object} response (error or result)
      */
     async httpGetAsync(url, options) {
-        return await fetch(url, options).then(result => {
+        return await fetch(url, options)
+            .then((result) => {
+                if (!result.ok) throw result;
 
-            if (!result.ok) throw result;
-
-            return result;
-        }).catch(error => {
-            return error;
-        });
+                return result;
+            })
+            .catch((error) => {
+                return error;
+            });
     }
 
     /**
@@ -139,7 +142,6 @@ export default class DBPEducredLitElement extends DBPLitElement {
      * @param responseData
      */
     async sendErrorAnalyticsEvent(category, action, information, responseData = {}) {
-
         const responseBody = await responseData.clone().json();
         const data = {
             status: responseData.status || '',
@@ -148,14 +150,13 @@ export default class DBPEducredLitElement extends DBPLitElement {
             errorDetails: responseBody['relay:errorDetails'] || '',
             information: information,
             // get 5 items from the stack trace
-            stack: getStackTrace().slice(1, 6)
+            stack: getStackTrace().slice(1, 6),
         };
 
         this.sendSetPropertyEvent('analytics-event', {
-            'category': category,
-            'action': action,
-            'name': JSON.stringify(data)
+            category: category,
+            action: action,
+            name: JSON.stringify(data),
         });
     }
-
 }
