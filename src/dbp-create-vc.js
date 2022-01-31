@@ -11,7 +11,6 @@ import * as commonStyles from '@dbp-toolkit/common/styles';
 import {InfoTooltip} from '@dbp-toolkit/tooltip';
 import {Activity} from './activity';
 import metadata from './dbp-create-vc.metadata.json';
-import * as polyfill from 'credential-handler-polyfill';
 
 class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
     constructor() {
@@ -23,12 +22,10 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
         this.loading = false;
         this.diplomas = [];
         this.locationName = 'Diploma';
-        this.did = ''; //'did:key:z6MkqyYXcBQZ5hZ9BFHBiVnmrZ1C1HCpesgZQoTdgjLdU6Ah';
+        this.did = '';
         this.currentDiploma = {};
         this.loadingDiplomas = true;
         this.showVc = false;
-
-        polyfill.loadOnce().then((x) => console.log('Ready to work with credentials!'));
     }
 
     static get scopedElements() {
@@ -148,25 +145,12 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
             return;
         }
         const newDID = this._('#did').value;
-        console.log('newDID = ' + newDID);
         const asJWT = this._('#format').checked;
-        console.log('JWT = ' + asJWT);
-
-        // if (Object.keys(this.currentDiploma).length > 0
-        //     && this.currentDiploma['@id'] === diplomaID
-        //     && newDID === this.did) {
-        //     this.showVc = true;
-        //     this.openDialog();
-        //     return;
-        // }
 
         this.did = newDID;
         const id = diplomaID.replace('/educationalcredentials/diplomas/', '');
         const response = await this.getVCRequest(id, asJWT);
-        const diploma = await response.json();
-        console.dir(diploma);
-
-        this.currentDiploma = diploma;
+        this.currentDiploma = await response.json();
         this.showVc = true;
         this.openDialog();
     }
@@ -258,80 +242,16 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
     }
 
     /* experimental wallet integration */
-    uuidv4() {
-        return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
-            (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
-        );
+    async getMyDID() {
+        this.did = await this.getDID();
     }
 
-    getDID() {
-        const credentialQuery = {
-            web: {
-                VerifiablePresentation: {
-                    challenge: this.uuidv4(),
-                    domain: window.location.hostname,
-                    query: {
-                        type: 'DIDAuth',
-                    },
-                },
-            },
-        };
-        console.log('Requesting DID...');
-        navigator.credentials.get(credentialQuery).then((result) => {
-            console.log('Result of get() request:');
-            console.dir(result);
-            this.did = result.data.holder ?? '';
-        });
-    }
-
-    saveVC() {
+    async saveMyVC() {
         const chapiVerifiableCredential = JSON.parse(this.currentDiploma.text);
-        const chapiVerifiablePresentation = {
-            '@context': [
-                'https://www.w3.org/2018/credentials/v1',
-                'https://wicket1001.github.io/ebsi4austria-examples/context/essif-schemas-vc-2020-v2.jsonld',
-            ],
-            type: ['VerifiablePresentation'],
-            holder: chapiVerifiableCredential.credentialSubject.id,
-            verifiableCredential: [chapiVerifiableCredential],
-        };
-        const webCredentialWrapper = new polyfill.WebCredential(
-            'VerifiablePresentation',
-            chapiVerifiablePresentation
-        );
-        console.log('Storing credential...');
-        navigator.credentials.store(webCredentialWrapper).then((result) => {
-            console.log('Result of store() request:');
-            console.dir(result);
-        });
+        const result = await this.saveVC(chapiVerifiableCredential);
+        console.dir(result);
     }
 
-    retrieveVC() {
-        const credentialQuery = {
-            web: {
-                VerifiablePresentation: {
-                    challenge: this.uuidv4(),
-                    domain: window.location.hostname,
-                    query: [
-                        {
-                            type: 'QueryByExample',
-                            credentialQuery: {
-                                reason: 'Please present a Verifiable Credential.',
-                                example: {
-                                    '@context': ['https://www.w3.org/2018/credentials/v1'],
-                                    type: ['VerifiableCredential'],
-                                },
-                            },
-                        },
-                    ],
-                },
-            },
-        };
-        console.log('Requesting credential...');
-        navigator.credentials.get(credentialQuery).then((result) => {
-            console.log('Result of get() request:', JSON.stringify(result, null, 2));
-        });
-    }
     /* ------------------------------- */
 
     static get styles() {
@@ -496,7 +416,7 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                                   id="did"
                                   size="64"
                                   value="${this.did}" />
-                              <button class="button is-secondary" @click="${this.getDID}">
+                              <button class="button is-secondary" @click="${this.getMyDID}">
                                   get from wallet
                               </button>
                           </div>
@@ -582,7 +502,7 @@ ${this.currentDiploma.text}</textarea
                                                         </button>
                                                         <button
                                                             class="button is-secondary"
-                                                            @click="${this.saveVC}"
+                                                            @click="${this.saveMyVC}"
                                                             ?disabled="${this._('#format')
                                                                 .checked}">
                                                             ${i18n.t('transfer-your-vc-wallet')}

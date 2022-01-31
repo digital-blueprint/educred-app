@@ -8,7 +8,6 @@ import metadata from './dbp-create-vc.metadata.json';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import {classMap} from 'lit/directives/class-map.js';
 import {Icon, LoadingButton, MiniSpinner} from '@dbp-toolkit/common';
-import * as polyfill from 'credential-handler-polyfill';
 // import {send} from "@dbp-toolkit/common/notification";
 
 class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
@@ -22,8 +21,6 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         this.diploma = {};
         this.status = 0;
         this.diplomas = [];
-
-        polyfill.loadOnce().then((x) => console.log('Ready to work with credentials!'));
     }
 
     static get scopedElements() {
@@ -104,84 +101,15 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
     }
 
     /* experimental wallet integration */
-    uuidv4() {
-        return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
-            (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
-        );
+    async getMyDID() {
+        this.did = await this.getDID();
     }
 
-    getDID() {
-        const credentialQuery = {
-            web: {
-                VerifiablePresentation: {
-                    challenge: this.uuidv4(),
-                    domain: window.location.hostname,
-                    query: {
-                        type: 'DIDAuth',
-                    },
-                },
-            },
-        };
-        console.log('Requesting DID...');
-        navigator.credentials.get(credentialQuery).then((result) => {
-            console.log('Result of get() request:');
-            console.dir(result);
-            this.did = result.data.holder ?? '';
-        });
-    }
-
-    saveVC() {
-        const chapiVerifiableCredential = JSON.parse(this.currentDiploma.text);
-        const chapiVerifiablePresentation = {
-            '@context': ['https://www.w3.org/2018/credentials/v1'],
-            type: ['VerifiablePresentation'],
-            holder: chapiVerifiableCredential.credentialSubject.id,
-            verifiableCredential: [chapiVerifiableCredential],
-        };
-        const webCredentialWrapper = new polyfill.WebCredential(
-            'VerifiablePresentation',
-            chapiVerifiablePresentation
-        );
-        console.log('Storing credential...');
-        navigator.credentials.store(webCredentialWrapper).then((result) => {
-            console.log('Result of store() request:');
-            console.dir(result);
-        });
-    }
-
-    retrieveVC() {
-        const credentialQuery = {
-            web: {
-                VerifiablePresentation: {
-                    challenge: this.uuidv4(),
-                    domain: window.location.hostname,
-                    query: [
-                        {
-                            type: 'QueryByExample',
-                            credentialQuery: {
-                                reason: 'Please present a Verifiable Credential.',
-                                example: {
-                                    '@context': [
-                                        'https://www.w3.org/2018/credentials/v1',
-                                        'https://wicket1001.github.io/ebsi4austria-examples/context/essif-schemas-vc-2020-v2.jsonld',
-                                    ],
-                                    type: ['VerifiableCredential'],
-                                },
-                            },
-                        },
-                    ],
-                },
-            },
-        };
-        console.log('Requesting credential...');
-        navigator.credentials.get(credentialQuery).then((result) => {
-            //console.log("Result of get() request:");
-            //console.dir(result);
-            this.diplomas = result.data.verifiableCredential;
-            //console.dir(this.diplomas);
-            this.diploma = this.diplomas[0];
-            this._('#vc-text').value = JSON.stringify(this.diploma, null, 2);
-        });
+    async retrieveMyVC() {
+        this.diplomas = await this.retrieveVC();
+        //console.dir(this.diplomas);
+        this.diploma = this.diplomas[0];
+        this._('#vc-text').value = JSON.stringify(this.diploma, null, 2);
     }
     /* ------------------------------- */
 
@@ -382,7 +310,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                             this.copyFromClipboard
                         }" ?disabled="${!canPaste}">${i18n.t('fetch-your-vc-clipboard')}</button>
                         <button class="button is-secondary" @click="${
-                            this.retrieveVC
+                            this.retrieveMyVC
                         }">wallet</button>
                     </div>
                     <div class="control vc-select ${classMap({hidden: this.diplomas.length < 2})}">

@@ -1,6 +1,7 @@
 import DBPLitElement from '@dbp-toolkit/common/dbp-lit-element';
 import {getStackTrace} from '@dbp-toolkit/common/error';
 //import {send} from "@dbp-toolkit/common/notification";
+import * as polyfill from 'credential-handler-polyfill';
 
 export default class DBPEducredLitElement extends DBPLitElement {
     constructor() {
@@ -8,6 +9,8 @@ export default class DBPEducredLitElement extends DBPLitElement {
         this.isSessionRefreshed = false;
         this.auth = {};
         this.person = {};
+
+        polyfill.loadOnce().then((x) => console.log('Ready to work with credentials!'));
     }
 
     static get properties() {
@@ -157,6 +160,96 @@ export default class DBPEducredLitElement extends DBPLitElement {
             category: category,
             action: action,
             name: JSON.stringify(data),
+        });
+    }
+
+    // experimental CHAPI wallet interaction
+
+    /**
+     * create an uuid v4 number
+     *
+     * @return string
+     */
+    uuidv4() {
+        return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+            (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
+        );
+    }
+
+    /**
+     * get DID from CHAPI wallet
+     */
+    async getDID() {
+        const credentialQuery = {
+            web: {
+                VerifiablePresentation: {
+                    challenge: this.uuidv4(),
+                    domain: window.location.hostname,
+                    query: {
+                        type: 'DIDAuth',
+                    },
+                },
+            },
+        };
+        return await navigator.credentials.get(credentialQuery).then((result) => {
+            return result.data.holder ?? '';
+        });
+    }
+
+    /**
+     * save verifiable credential to CHAPI wallet
+     *
+     * @param chapiVerifiableCredential
+     */
+    async saveVC(chapiVerifiableCredential) {
+        const chapiVerifiablePresentation = {
+            '@context': [
+                'https://www.w3.org/2018/credentials/v1',
+                'https://wicket1001.github.io/ebsi4austria-examples/context/essif-schemas-vc-2020-v2.jsonld',
+            ],
+            type: ['VerifiablePresentation'],
+            holder: chapiVerifiableCredential.credentialSubject.id,
+            verifiableCredential: [chapiVerifiableCredential],
+        };
+        const webCredentialWrapper = new polyfill.WebCredential(
+            'VerifiablePresentation',
+            chapiVerifiablePresentation
+        );
+        return await navigator.credentials.store(webCredentialWrapper).then((result) => {
+            return result;
+        });
+    }
+
+    /**
+     * retrieve all available verifiable credentials from CHAPI wallet
+     *
+     */
+    async retrieveVC() {
+        const credentialQuery = {
+            web: {
+                VerifiablePresentation: {
+                    challenge: this.uuidv4(),
+                    domain: window.location.hostname,
+                    query: [
+                        {
+                            type: 'QueryByExample',
+                            credentialQuery: {
+                                reason: 'Please present a Verifiable Credential.',
+                                example: {
+                                    '@context': [
+                                        'https://www.w3.org/2018/credentials/v1',
+                                        'https://wicket1001.github.io/ebsi4austria-examples/context/essif-schemas-vc-2020-v2.jsonld',
+                                    ],
+                                    type: ['VerifiableCredential'],
+                                },
+                            },
+                        },
+                    ],
+                },
+            },
+        };
+        return await navigator.credentials.get(credentialQuery).then((result) => {
+            return result.data.verifiableCredential;
         });
     }
 }
