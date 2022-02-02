@@ -21,7 +21,6 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
         this.activity = new Activity(metadata);
         this.loading = false;
         this.diplomas = [];
-        this.locationName = 'Diploma';
         this.did = '';
         this.currentDiploma = {};
         this.loadingDiplomas = true;
@@ -44,7 +43,6 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
             lang: {type: String},
             entryPointUrl: {type: String, attribute: 'entry-point-url'},
             loading: {type: Boolean, attribute: false},
-            locationName: {type: String, attribute: 'preselected-option'},
             did: {type: String, attribute: false},
             diplomas: {type: Array, attribute: false},
             currentDiploma: {type: Object, attribute: false},
