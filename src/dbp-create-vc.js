@@ -98,17 +98,12 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
      */
     async getDiplomaRequest(diplomaID) {
         const options = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/ld+json',
-                Authorization: 'Bearer ' + this.auth.token,
+            method: 'GET', headers: {
+                'Content-Type': 'application/ld+json', Authorization: 'Bearer ' + this.auth.token,
             },
         };
 
-        return await this.httpGetAsync(
-            this.entryPointUrl + '/educationalcredentials/diplomas/' + diplomaID,
-            options
-        );
+        return await this.httpGetAsync(this.entryPointUrl + '/educationalcredentials/diplomas/' + diplomaID, options);
     }
 
     /**
@@ -120,21 +115,14 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
      */
     async getVCRequest(diplomaID, format) {
         const vars = {
-            did: this.did,
-            format: format ? 'jsonldjwt' : '',
+            did: this.did, format: format ? 'jsonldjwt' : '',
         };
         const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/ld+json',
-                Authorization: 'Bearer ' + this.auth.token,
-            },
-            body: JSON.stringify(vars),
+            method: 'POST', headers: {
+                'Content-Type': 'application/ld+json', Authorization: 'Bearer ' + this.auth.token,
+            }, body: JSON.stringify(vars),
         };
-        return await this.httpGetAsync(
-            this.entryPointUrl + '/educationalcredentials/diplomas/' + diplomaID + '/verifiable',
-            options
-        );
+        return await this.httpGetAsync(this.entryPointUrl + '/educationalcredentials/diplomas/' + diplomaID + '/verifiable', options);
     }
 
     async getVC(event) {
@@ -160,17 +148,12 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
      */
     async getAllDiplomasRequest() {
         const options = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/ld+json',
-                Authorization: 'Bearer ' + this.auth.token,
+            method: 'GET', headers: {
+                'Content-Type': 'application/ld+json', Authorization: 'Bearer ' + this.auth.token,
             },
         };
 
-        return await this.httpGetAsync(
-            this.entryPointUrl + '/educationalcredentials/diplomas',
-            options
-        );
+        return await this.httpGetAsync(this.entryPointUrl + '/educationalcredentials/diplomas', options);
     }
 
     /**
@@ -210,13 +193,11 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
      *
      */
     openDialog() {
-        if (this._('#show-diploma-modal'))
-            MicroModal.show(this._('#show-diploma-modal'), {
-                disableScroll: true,
-                onClose: (modal) => {
-                    this.showVc = false;
-                },
-            });
+        if (this._('#show-diploma-modal')) MicroModal.show(this._('#show-diploma-modal'), {
+            disableScroll: true, onClose: (modal) => {
+                this.showVc = false;
+            },
+        });
     }
 
     /**
@@ -230,16 +211,12 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
     copyToClipboard() {
         const text = this.currentDiploma.text;
         navigator.clipboard.writeText(text).then(
-            function () {
-                console.log('Async: Copying to clipboard was successful!');
-            },
-            function (err) {
-                console.error('Async: Could not copy text: ', err);
-            }
-        );
+            () => console.log('Async: Copying to clipboard was successful!'),
+            (err) => console.error('Async: Could not copy text: ', err));
     }
 
     /* experimental wallet integration */
+    
     async getMyDID() {
         this.did = await this.getDID();
     }
@@ -283,9 +260,11 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
             .btn-box {
                 margin-top: 1.5rem;
             }
+
             .btn-box-label {
                 margin-right: 1.5rem;
             }
+
             .btn {
                 display: flex;
                 justify-content: space-between;
@@ -387,143 +366,117 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
         const i18n = this._i18n;
 
         return html`
-            <div
-                class="notification is-warning ${classMap({
-                    hidden: this.isLoggedIn() || this.isLoading(),
-                })}">
+            <div class="notification is-warning ${classMap({
+                hidden: this.isLoggedIn() || this.isLoading(),
+            })}">
                 ${i18n.t('error-login-message')}
             </div>
 
-            ${!this.isLoggedIn() || !this.hasPermissions()
-                ? html` <div
-                      class="notification is-danger ${classMap({
-                          hidden: !this.hasPermissions() || !this.isLoggedIn() || this.isLoading(),
-                      })}">
-                      ${i18n.t('error-permission-message')}
-                  </div>`
-                : html`
-                      <div>
-                          <h2>${this.activity.getName(this.lang)}</h2>
-                          <p class="subheadline">${this.activity.getDescription(this.lang)}</p>
+            ${!this.isLoggedIn() || !this.hasPermissions() ? html`
+                <div class="notification is-danger ${classMap({
+                    hidden: !this.hasPermissions() || !this.isLoggedIn() || this.isLoading(),
+                })}">
+                    ${i18n.t('error-permission-message')}
+                </div>` : html`
+                <div>
+                    <h2>${this.activity.getName(this.lang)}</h2>
+                    <p class="subheadline">${this.activity.getDescription(this.lang)}</p>
 
-                          <div>
-                              <label for="did">DID:</label>
-                              <input
-                                  type="text"
-                                  name="did"
-                                  id="did"
-                                  size="64"
-                                  value="${this.did}" />
-                              <button class="button is-secondary" @click="${this.getMyDID}">
-                                  get from wallet
-                              </button>
-                          </div>
-                          <div>
-                              <label for="format">JWT:</label>
-                              <input type="checkbox" name="format" id="format" value="1" />
-                          </div>
-                          <div class="diplomas">
-                              <div>
-                                  ${this.diplomas.map(
-                                      (diploma) => html`
-                                          <div class="diploma">
-                                              <span class="header">
-                                                  <h3>${diploma.name}</h3>
-                                                  <span>
-                                                      <b>${diploma.educationalLevel}</b> ${i18n.t(
-                                                          'from'
-                                                      )}
-                                                      ${diploma.validFrom.substr(0, 10)}
-                                                  </span>
-                                                  <span>id = ${diploma['@id']}</span>
-                                                  <button
-                                                      class="button is-secondary"
-                                                      @click="${this.getVC}"
-                                                      data-diplomaID="${diploma['@id']}">
-                                                      export
-                                                  </button>
-                                              </span>
-                                          </div>
-                                      `
-                                  )}
-                              </div>
-                              ${this.diplomas.length === 0
-                                  ? html`<p>sorry, you have no diplomas jet</p>`
-                                  : ''}
-                          </div>
-                      </div>
-                      <div
-                          class="modal micromodal-slide"
-                          id="show-diploma-modal"
-                          aria-hidden="true"
-                          style="display: ${this.showVc ? 'block' : 'none'}">
-                          <div class="modal-overlay" tabindex="-2" data-micromodal-close>
-                              <div
-                                  class="modal-container"
-                                  id="diploma-modal-box"
-                                  role="dialog"
-                                  aria-modal="true"
-                                  aria-labelledby="diploma-modal-title">
-                                  <main class="modal-content" id="diploma-modal-content">
-                                      <span
-                                          class="control diploma-loading ${classMap({
-                                              hidden: this.showVc,
-                                          })}">
-                                          <span class="loading">
-                                              <dbp-mini-spinner
-                                                  text=${i18n.t(
-                                                      'loading-message'
-                                                  )}></dbp-mini-spinner>
-                                          </span>
-                                      </span>
-                                      ${Object.keys(this.currentDiploma).length > 0
-                                          ? html` <div class="content-wrapper">
-                                                <div class="left-container">
-                                                    <h3 id="diploma-modal-title">
-                                                        ${this.currentDiploma.name}
-                                                    </h3>
-                                                    <textarea
-                                                        style="width:100%"
-                                                        rows="12"
-                                                        readonly
-                                                        wrap="soft">
-${this.currentDiploma.text}</textarea
-                                                    >
-                                                    <div class="btn-box">
-                                                        <span class="btn-box-label"
-                                                            >${i18n.t('transfer-your-vc')}</span
-                                                        >
-                                                        <button
-                                                            class="button is-secondary"
-                                                            @click="${this.copyToClipboard}">
-                                                            ${i18n.t('transfer-your-vc-clipboard')}
-                                                        </button>
-                                                        <button
-                                                            class="button is-secondary"
-                                                            @click="${this.saveMyVC}"
-                                                            ?disabled="${this._('#format')
-                                                                .checked}">
-                                                            ${i18n.t('transfer-your-vc-wallet')}
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <button
-                                                    title="Close"
-                                                    class="modal-close"
-                                                    aria-label="Close modal"
-                                                    @click="${this.closeDialog}">
-                                                    <dbp-icon
-                                                        title="${i18n.t('file-sink.modal-close')}"
-                                                        name="close"
-                                                        class="close-icon"></dbp-icon>
+                    <div>
+                        <label for="did">DID:</label>
+                        <input type="text"
+                               name="did"
+                               id="did"
+                               size="64"
+                               value="${this.did}"/>
+                        <button class="button is-secondary" @click="${this.getMyDID}">
+                            get from wallet
+                        </button>
+                    </div>
+                    <div>
+                        <label for="format">JWT:</label>
+                        <input type="checkbox" name="format" id="format" value="1"/>
+                    </div>
+                    <div class="diplomas">
+                        <div>${this.diplomas.map((diploma) => html`
+                            <div class="diploma">
+                                <span class="header">
+                                  <h3>${diploma.name}</h3>
+                                  <span>
+                                      <b>${diploma.educationalLevel}</b>
+                                      ${i18n.t('from')}
+                                      ${diploma.validFrom.substr(0, 10)}
+                                  </span>
+                                  <span>id = ${diploma['@id']}</span>
+                                  <button class="button is-secondary"
+                                          @click="${this.getVC}"
+                                          data-diplomaID="${diploma['@id']}">
+                                      export
+                                  </button>
+                                </span>
+                            </div>
+                        `)}
+                        </div>
+                        ${this.diplomas.length === 0 ? html`<p>sorry, you have no diplomas jet</p>` : ''}
+                    </div>
+                </div>
+                <div class="modal micromodal-slide"
+                     id="show-diploma-modal"
+                     aria-hidden="true"
+                     style="display: ${this.showVc ? 'block' : 'none'}">
+                    <div class="modal-overlay" tabindex="-2" data-micromodal-close>
+                        <div class="modal-container"
+                             id="diploma-modal-box"
+                             role="dialog"
+                             aria-modal="true"
+                             aria-labelledby="diploma-modal-title">
+                            <main class="modal-content" id="diploma-modal-content">
+                                <span class="control diploma-loading ${classMap({
+                                    hidden: this.showVc,
+                                })}">
+                                    <span class="loading">
+                                        <dbp-mini-spinner text=${i18n.t('loading-message')}
+                                        ></dbp-mini-spinner>
+                                    </span>
+                                </span>
+                                ${Object.keys(this.currentDiploma).length > 0 ? html`
+                                    <div class="content-wrapper">
+                                        <div class="left-container">
+                                            <h3 id="diploma-modal-title">${this.currentDiploma.name}</h3>
+                                            <textarea
+                                                    style="width:100%"
+                                                    rows="12"
+                                                    readonly
+                                                    wrap="soft"
+                                            >${this.currentDiploma.text}</textarea>
+                                            <div class="btn-box">
+                                                <span class="btn-box-label">${i18n.t('transfer-your-vc')}</span>
+                                                <button class="button is-secondary"
+                                                        @click="${this.copyToClipboard}">
+                                                    ${i18n.t('transfer-your-vc-clipboard')}
                                                 </button>
-                                            </div>`
-                                          : ''}
-                                  </main>
-                              </div>
-                          </div>
-                      </div>
-                  `}
+                                                <button class="button is-secondary"
+                                                        @click="${this.saveMyVC}"
+                                                        ?disabled="${this._('#format').checked}">
+                                                    ${i18n.t('transfer-your-vc-wallet')}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <button title="Close"
+                                                class="modal-close"
+                                                aria-label="Close modal"
+                                                @click="${this.closeDialog}">
+                                            <dbp-icon
+                                                    name="close"
+                                                    title="${i18n.t('file-sink.modal-close')}"
+                                                    class="close-icon"></dbp-icon>
+                                        </button>
+                                    </div>` : ''}
+                            </main>
+                        </div>
+                    </div>
+                </div>
+            `}
         `;
     }
 }

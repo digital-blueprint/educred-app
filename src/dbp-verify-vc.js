@@ -8,6 +8,7 @@ import metadata from './dbp-create-vc.metadata.json';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import {classMap} from 'lit/directives/class-map.js';
 import {Icon, LoadingButton, MiniSpinner} from '@dbp-toolkit/common';
+
 // import {send} from "@dbp-toolkit/common/notification";
 
 class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
@@ -25,9 +26,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
 
     static get scopedElements() {
         return {
-            'dbp-icon': Icon,
-            'dbp-mini-spinner': MiniSpinner,
-            'dbp-loading-button': LoadingButton,
+            'dbp-icon': Icon, 'dbp-mini-spinner': MiniSpinner, 'dbp-loading-button': LoadingButton,
         };
     }
 
@@ -59,18 +58,13 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         formData.append('text', text);
 
         const options = {
-            method: 'POST',
-            headers: {
+            method: 'POST', headers: {
                 //'Content-Type': 'application/ld+json',
                 Authorization: 'Bearer ' + this.auth.token,
-            },
-            body: formData,
+            }, body: formData,
         };
 
-        return await this.httpGetAsync(
-            this.entryPointUrl + '/educationalcredentials/diplomas',
-            options
-        );
+        return await this.httpGetAsync(this.entryPointUrl + '/educationalcredentials/diplomas', options);
     }
 
     async verifyVC() {
@@ -91,13 +85,10 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
     }
 
     copyFromClipboard() {
-        navigator.clipboard.readText().then(
-            (text) => {
-                this._('#vc-text').value = text;
-                console.log('Async: Copying from clipboard was successful!');
-            },
-            (err) => console.error('Async: Could not copy from clipboard. error: ', err)
-        );
+        navigator.clipboard.readText().then((text) => {
+            this._('#vc-text').value = text;
+            console.log('Async: Copying from clipboard was successful!');
+        }, (err) => console.error('Async: Could not copy from clipboard. error: ', err));
     }
 
     /* experimental wallet integration */
@@ -111,6 +102,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         this.diploma = this.diplomas[0];
         this._('#vc-text').value = JSON.stringify(this.diploma, null, 2);
     }
+
     /* ------------------------------- */
 
     selectDiploma() {
@@ -142,6 +134,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                 margin-top: 1rem;
                 margin-bottom: 1rem;
             }
+
             .vc-text textarea {
                 width: 100%;
             }
@@ -159,18 +152,22 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
             .btn-box {
                 margin-top: 1.5rem;
             }
+
             .btn-box-label {
                 margin-right: 1.5rem;
             }
+
             .btn {
                 margin-bottom: 1rem;
             }
 
             .verify-0 {
             }
+
             .verify-1 {
                 color: var(--dbp-success-bg-color);
             }
+
             .verify-90 {
                 color: var(--dbp-danger-bg-color);
             }
@@ -279,11 +276,9 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         const canPaste = navigator.clipboard['readText'] !== undefined;
 
         return html`
-            <div
-                class="notification is-warning ${classMap({
-                    hidden: this.isLoggedIn() || this.isLoading(),
-                })}">
-                ${i18n.t('error-login-message')}
+            <div class="notification is-warning ${classMap({
+                hidden: this.isLoggedIn() || this.isLoading(),
+            })}">${i18n.t('error-login-message')}
             </div>
 
             <div class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">
@@ -291,14 +286,11 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                     <dbp-mini-spinner text=${i18n.t('loading-message')}></dbp-mini-spinner>
                 </span>
             </div>
-            ${!this.isLoggedIn() || !this.hasPermissions()
-                ? html` <div
-                      class="notification is-danger ${classMap({
-                          hidden: !this.hasPermissions() || !this.isLoggedIn() || this.isLoading(),
-                      })}">
-                      ${i18n.t('error-permission-message')}
-                  </div>`
-                : html`
+            ${!this.isLoggedIn() || !this.hasPermissions() ? html`
+                <div class="notification is-danger ${classMap({
+                    hidden: !this.hasPermissions() || !this.isLoggedIn() || this.isLoading(),
+                })}">${i18n.t('error-permission-message')}
+                </div>` : html`
                 <div class="vc">
                     <div class="header">
                         <h3>${i18n.t('upload-other-diploma')}</h3>
@@ -306,60 +298,54 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                     </div>
                     <div class="btn-box">
                         <span class="btn-box-label">${i18n.t('fetch-your-vc')}</span>
-                        <button class="button is-secondary" @click="${
-                            this.copyFromClipboard
-                        }" ?disabled="${!canPaste}">${i18n.t('fetch-your-vc-clipboard')}</button>
-                        <button class="button is-secondary" @click="${
-                            this.retrieveMyVC
-                        }">wallet</button>
+                        <button class="button is-secondary"
+                                @click="${this.copyFromClipboard}"
+                                ?disabled="${!canPaste}">
+                            ${i18n.t('fetch-your-vc-clipboard')}
+                        </button>
+                        <button class="button is-secondary"
+                                @click="${this.retrieveMyVC}">
+                            wallet
+                        </button>
                     </div>
-                    <div class="control vc-select ${classMap({hidden: this.diplomas.length < 2})}">
-                        <select name="diploma_index" id="diplomas" @change="${
-                            this.selectDiploma
-                        }" style="width:100%">
-                            ${this.diplomas.map(
-                                (item) =>
-                                    html`<option value="${item.id}">
-                                        ${item.credentialSubject.studyProgram}
-                                    </option>`
-                            )}
-                        </select> 
+                    <div class="control vc-select ${classMap({
+                        hidden: this.diplomas.length < 2,
+                    })}">
+                        <select name="diploma_index"
+                                id="diplomas"
+                                @change="${this.selectDiploma}"
+                                style="width:100%">
+                            ${this.diplomas.map((item) => html`
+                                <option value="${item.id}">
+                                    ${item.credentialSubject.studyProgram}
+                                </option>`)}
+                        </select>
                     </div>
                     <div class="vc-text">
                         <textarea name="text" id="vc-text" rows="12" wrap="soft"></textarea>
                     </div>
                     <div class="btn">
-                        <dbp-loading-button type="is-primary" id="vc-btn" value="${i18n.t(
-                            'upload-btn-text'
-                        )}"
-                                            @click="${this.verifyVC}"
-                                            title="${i18n.t(
-                                                'upload-btn-text'
-                                            )}"></dbp-loading-button>
+                        <dbp-loading-button
+                                type="is-primary"
+                                id="vc-btn"
+                                value="${i18n.t('upload-btn-text')}"
+                                @click="${this.verifyVC}"
+                                title="${i18n.t('upload-btn-text')}">
+                        </dbp-loading-button>
                     </div>
                     <div class="response">
                         <span>${i18n.t('response-other-diploma')}</span>
-                        ${
-                            this.loading
-                                ? html` <span class="control ${classMap({hidden: !this.loading})}">
-                                      <span class="loading">
-                                          <dbp-mini-spinner
-                                              text=${i18n.t('loading-message')}></dbp-mini-spinner>
-                                      </span>
-                                  </span>`
-                                : html`
-                                      <span class="verify-${this.status}"
-                                          >${i18n.t(
-                                              'response-other-diploma-' + this.status + '-text'
-                                          )}</span
-                                      >
-                                  `
-                        }
+                        ${this.loading ? html`<span
+                                class="control ${classMap({hidden: !this.loading})}">
+                                          <span class="loading">
+                                              <dbp-mini-spinner
+                                                      text=${i18n.t('loading-message')}></dbp-mini-spinner>
+                                          </span>
+                                      </span>` : html`<span class="verify-${this.status}">
+                                          ${i18n.t('response-other-diploma-' + this.status + '-text')}
+                                      </span>`}
                     </div>
-                </div>
-            </div>
-
-        `}
+                </div>`}
         `;
     }
 }
