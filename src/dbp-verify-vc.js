@@ -53,6 +53,12 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         super.update(changedProperties);
     }
 
+    /**
+     * Post diploma to backend, return result
+     *
+     * @param text
+     * @return {Promise<*>}
+     */
     async postVCRequest(text) {
         let formData = new FormData();
         formData.append('text', text);
@@ -67,6 +73,11 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         return await this.httpGetAsync(this.entryPointUrl + '/educationalcredentials/diplomas', options);
     }
 
+    /**
+     * Verify diploma by backend and update frontend
+     *
+     * @return {Promise<void>}
+     */
     async verifyVC() {
         //this._('#vc-btn').disabled = true;
         const text = this._('#vc-text').value;
@@ -84,6 +95,10 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         this.loading = false;
     }
 
+    /**
+     * Copy diploma from the clipboard (if browsers allows)
+     *
+     */
     copyFromClipboard() {
         navigator.clipboard.readText().then((text) => {
             this._('#vc-text').value = text;
@@ -92,10 +107,21 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
     }
 
     /* experimental wallet integration */
+
+    /**
+     * Get the user's DID from the wallet
+     *
+     * @return {Promise<void>}
+     */
     async getMyDID() {
         this.did = await this.getDID();
     }
 
+    /**
+     * Retrieve all diplomas from the wallet
+     *
+     * @return {Promise<void>}
+     */
     async retrieveMyVC() {
         this.diplomas = await this.retrieveVC();
         //console.dir(this.diplomas);
@@ -105,6 +131,10 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
 
     /* ------------------------------- */
 
+    /**
+     * Select a diploma of the shared diplomas from them wallet
+     *
+     */
     selectDiploma() {
         const selected = this._('#diplomas').value;
         console.log('selected: ' + selected);

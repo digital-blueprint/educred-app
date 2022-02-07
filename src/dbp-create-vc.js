@@ -208,6 +208,10 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
         if (this._('#show-diploma-modal')) MicroModal.close(this._('#show-diploma-modal'));
     }
 
+    /**
+     * Copy the current diploma to the clipboard
+     *
+     */
     copyToClipboard() {
         const text = this.currentDiploma.text;
         navigator.clipboard.writeText(text).then(
@@ -216,11 +220,21 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
     }
 
     /* experimental wallet integration */
-    
+
+    /**
+     * Get the user's DID from the wallet
+     *
+     * @return {Promise<void>}
+     */
     async getMyDID() {
         this.did = await this.getDID();
     }
 
+    /**
+     * Save the current diploma to the wallet
+     *
+     * @return {Promise<void>}
+     */
     async saveMyVC() {
         const chapiVerifiableCredential = JSON.parse(this.currentDiploma.text);
         const result = await this.saveVC(chapiVerifiableCredential);

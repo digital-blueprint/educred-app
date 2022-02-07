@@ -168,7 +168,7 @@ export default class DBPEducredLitElement extends DBPLitElement {
     /**
      * create an uuid v4 number
      *
-     * @return string
+     * @returns {string}
      */
     uuidv4() {
         return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
@@ -178,6 +178,8 @@ export default class DBPEducredLitElement extends DBPLitElement {
 
     /**
      * get DID from CHAPI wallet
+     *
+     * @returns {string}
      */
     async getDID() {
         const credentialQuery = {
@@ -200,6 +202,7 @@ export default class DBPEducredLitElement extends DBPLitElement {
      * save verifiable credential to CHAPI wallet
      *
      * @param chapiVerifiableCredential
+     * @returns {object}
      */
     async saveVC(chapiVerifiableCredential) {
         const chapiVerifiablePresentation = {
@@ -223,6 +226,7 @@ export default class DBPEducredLitElement extends DBPLitElement {
     /**
      * retrieve all available verifiable credentials from CHAPI wallet
      *
+     * @returns {Array}
      */
     async retrieveVC() {
         const credentialQuery = {
