@@ -1,6 +1,7 @@
 import {createInstance} from './i18n.js';
 import {css, html} from 'lit';
 import DBPEducredLitElement from './dbp-educred-lit-element';
+import DbpDiploma from './dbp-diploma';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import {Activity} from './activity.js';
@@ -26,7 +27,10 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
 
     static get scopedElements() {
         return {
-            'dbp-icon': Icon, 'dbp-mini-spinner': MiniSpinner, 'dbp-loading-button': LoadingButton,
+            'dbp-icon': Icon,
+            'dbp-mini-spinner': MiniSpinner,
+            'dbp-loading-button': LoadingButton,
+            'dbp-diploma': DbpDiploma,
         };
     }
 
@@ -142,8 +146,15 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
             if (selected === item.id || selected === item.credentialSubject.id) {
                 this.diploma = item;
                 this._('#vc-text').value = JSON.stringify(this.diploma, null, 2);
+                this.render();
             }
         });
+    }
+
+    paste() {
+        this.diploma = JSON.parse(this._('#vc-text').value);
+        this.diplomas.push(this.diploma);
+        this.render();
     }
 
     static get styles() {
@@ -179,6 +190,18 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                 background-position-x: calc(100% - 0.4rem);
             }
 
+            .diploma {
+                margin-top: 1rem;
+                display: flex;
+                justify-content: space-between;
+                column-gap: 15px;
+                row-gap: 1.5em;
+                align-items: center;
+                margin-bottom: 2em;
+                border: black 1px solid;
+                padding: 1em;
+            }
+
             .btn-box {
                 margin-top: 1.5rem;
             }
@@ -205,7 +228,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
             #vc-modal-box {
                 display: flex;
                 flex-direction: column;
-                padding: 0px;
+                padding: 0;
                 min-width: 700px;
                 max-width: 880px;
                 min-height: unset;
@@ -282,7 +305,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                     height: 100%;
                     min-width: 100%;
                     min-height: 100%;
-                    padding: 0px;
+                    padding: 0;
                 }
 
                 .left-container {
@@ -292,7 +315,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                 .content-wrapper {
                     display: flex;
                     flex-direction: column;
-                    padding: 0px;
+                    padding: 0;
                     grid-gap: inherit;
                     min-height: 100vh;
                 }
@@ -304,6 +327,14 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         const i18n = this._i18n;
 
         const canPaste = navigator.clipboard['readText'] !== undefined;
+        const externDiploma = this.diplomas.length > 0 ? {
+            "@id": this.diploma.id,
+            name: this.diploma.credentialSubject.studyProgram,
+            educationalLevel: this.diploma.credentialSubject.learningAchievement,
+            validFrom: this.diploma.credentialSubject.dateOfAchievement,
+        } : {};
+        // console.log('diploma:');
+        // console.dir(externDiploma);
 
         return html`
             <div class="notification is-warning ${classMap({
@@ -351,8 +382,13 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                                 </option>`)}
                         </select>
                     </div>
+                    <div class="diploma ${classMap({
+                        hidden: this.diplomas.length < 1,
+                    })}">
+                        <dbp-diploma diploma="${JSON.stringify(externDiploma)}" lang="${this.lang}"></dbp-diploma>
+                    </div>
                     <div class="vc-text">
-                        <textarea name="text" id="vc-text" rows="12" wrap="soft"></textarea>
+                        <textarea name="text" id="vc-text" rows="12" wrap="soft" @change="${this.paste}"></textarea>
                     </div>
                     <div class="btn">
                         <dbp-loading-button
@@ -360,8 +396,8 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                                 id="vc-btn"
                                 value="${i18n.t('upload-btn-text')}"
                                 @click="${this.verifyVC}"
-                                title="${i18n.t('upload-btn-text')}">
-                        </dbp-loading-button>
+                                title="${i18n.t('upload-btn-text')}"
+                        ></dbp-loading-button>
                     </div>
                     <div class="response">
                         <span>${i18n.t('response-other-diploma')}</span>

@@ -1,6 +1,7 @@
 import {createInstance} from './i18n.js';
 import {css, html} from 'lit';
 import DBPEducredLitElement from './dbp-educred-lit-element';
+import DbpDiploma from './dbp-diploma';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import {Icon, InlineNotification, LoadingButton, MiniSpinner} from '@dbp-toolkit/common';
@@ -34,6 +35,7 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
             'dbp-loading-button': LoadingButton,
             'dbp-inline-notification': InlineNotification,
             'dbp-info-tooltip': InfoTooltip,
+            'dbp-diploma': DbpDiploma,
         };
     }
 
@@ -260,16 +262,18 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                 row-gap: 1.5em;
                 align-items: center;
                 margin-bottom: 2em;
+                border: black 1px solid;
+                padding: 1em;
             }
 
             .diplomas {
                 margin-top: 2.3em;
             }
 
-            .header {
-                display: grid;
-                align-items: center;
-            }
+            /*.header {*/
+            /*    display: grid;*/
+            /*    align-items: center;*/
+            /*}*/
 
             .btn-box {
                 margin-top: 1.5rem;
@@ -341,7 +345,7 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
             @media only screen and (orientation: portrait) and (max-width: 768px) {
                 .diploma {
                     display: block;
-                    margin-bottom: 0;
+                    margin-bottom: 5px;
                 }
 
                 .diplomas {
@@ -414,20 +418,12 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                     <div class="diplomas">
                         <div>${this.diplomas.map((diploma) => html`
                             <div class="diploma">
-                                <span class="header">
-                                  <h3>${diploma.name}</h3>
-                                  <span>
-                                      <b>${diploma.educationalLevel}</b>
-                                      ${i18n.t('from')}
-                                      ${diploma.validFrom.substr(0, 10)}
-                                  </span>
-                                  <span>id = ${diploma['@id']}</span>
-                                  <button class="button is-secondary"
-                                          @click="${this.getVC}"
-                                          data-diplomaID="${diploma['@id']}">
-                                      export
-                                  </button>
-                                </span>
+                                <dbp-diploma diploma="${JSON.stringify(diploma)}" lang="${this.lang}"></dbp-diploma>
+                                <button class="button is-secondary"
+                                        @click="${this.getVC}"
+                                        data-diplomaID="${diploma['@id']}">
+                                    export
+                                </button>
                             </div>
                         `)}
                         </div>
