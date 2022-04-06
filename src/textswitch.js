@@ -59,8 +59,10 @@ export class TextSwitch extends AdapterLitElement {
             }
 
             .active {
-                background-color: black !important;
-                color: var(--dbp-primary-text-color) !important;
+                background-color: var(--dbp-on-secondary-surface) !important;
+                color: var(--dbp-secondary-surface) !important;
+                border: var(--dbp-border) !important;
+                border-color: var(--dbp-secondary-surface-border-color);
             }
 
             .button {
@@ -69,7 +71,17 @@ export class TextSwitch extends AdapterLitElement {
             }
 
             .button:hover:not([disabled]) {
-                background-color: var(--dbp-secondary-bg-color) !important;
+                color: var(--dbp-hover-color, var(--dbp-content)) !important;
+                border-color: var(--dbp-hover-color, var(--dbp-content)) !important;
+                background-color: var(--dbp-hover-background-color) !important;
+            }
+
+            .button:first-child {
+                border-radius: var(--dbp-border-radius) 0 0 var(--dbp-border-radius);
+            }
+
+            .button:last-child {
+                border-radius: 0 var(--dbp-border-radius) var(--dbp-border-radius) 0;
             }
 
             @media only screen and (orientation: portrait) and (max-width: 768px) {

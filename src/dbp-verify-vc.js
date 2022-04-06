@@ -218,11 +218,11 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
             }
 
             .verify-1 {
-                color: var(--dbp-success-bg-color);
+                color: var(--dbp-success);
             }
 
             .verify-90 {
-                color: var(--dbp-danger-bg-color);
+                color: var(--dbp-danger);
             }
 
             #vc-modal-box {

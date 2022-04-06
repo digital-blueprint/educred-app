@@ -262,7 +262,7 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
                 row-gap: 1.5em;
                 align-items: center;
                 margin-bottom: 2em;
-                border: black 1px solid;
+                border: var(--dbp-border);
                 padding: 1em;
             }
 
