@@ -336,6 +336,15 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
         // console.log('diploma:');
         // console.dir(externDiploma);
 
+        let statusText = '';
+        if (this.status == 0) {
+            statusText = i18n.t('response-other-diploma-0-text');
+        } else if (this.status == 1) {
+            statusText = i18n.t('response-other-diploma-1-text');
+        } else if (this.status == 90) {
+            statusText = i18n.t('response-other-diploma-90-text');
+        }
+
         return html`
             <div class="notification is-warning ${classMap({
                 hidden: this.isLoggedIn() || this.isLoading(),
@@ -408,7 +417,7 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                                                       text=${i18n.t('loading-message')}></dbp-mini-spinner>
                                           </span>
                                       </span>` : html`<span class="verify-${this.status}">
-                                          ${i18n.t('response-other-diploma-' + this.status + '-text')}
+                                          ${statusText}
                                       </span>`}
                     </div>
                 </div>`}

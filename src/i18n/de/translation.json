@@ -1,12 +1,13 @@
 {
     "error-login-message": "Sie müssen angemeldet sein um diese Funktion nutzen zu können!",
     "error-permission-message": "Diese Applikation ist aktuell nur für Studierende verfügbar!",
+    "fetch-your-vc": "Übernehmen Sie Ihren elektronischen Nachweis aus",
+    "fetch-your-vc-clipboard": "Zwischenablage",
+    "file-sink": {
+        "modal-close": ""
+    },
+    "from": "von",
     "loading-message": "Lädt...",
-    "reload": "Aktualisieren",
-    "reload-failed": "Automatische Aktualisierung fehlgeschlagen",
-    "upload-other-diploma": "Diplom hochladen und verifizieren",
-    "upload-other-diploma-text": "Um einen Abschluss einer anderen Universität anerkennen zu lassen, können Sie hier Ihr Diplom hochladen und verifizieren.",
-    "upload-btn-text": "hochladen und verifizieren",
     "response-other-diploma": "Resultat:",
     "response-other-diploma-0-text": "Noch kein Diplom eingereicht.",
     "response-other-diploma-1-text": "Das Diplom wurde erfolgreich verifiziert.",
@@ -14,8 +15,7 @@
     "transfer-your-vc": "Übernehmen Sie Ihren elektronischen Nachweis in",
     "transfer-your-vc-clipboard": "Zwischenablage",
     "transfer-your-vc-wallet": "Wallet",
-    "from": "von",
-    "fetch-your-vc": "Übernehmen Sie Ihren elektronischen Nachweis aus",
-    "fetch-your-vc-clipboard": "Zwischenablage",
-    "fetch-your-vc-wallet": "Wallet"
+    "upload-btn-text": "hochladen und verifizieren",
+    "upload-other-diploma": "Diplom hochladen und verifizieren",
+    "upload-other-diploma-text": "Um einen Abschluss einer anderen Universität anerkennen zu lassen, können Sie hier Ihr Diplom hochladen und verifizieren."
 }
