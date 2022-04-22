@@ -182,20 +182,21 @@ export default class DBPEducredLitElement extends DBPLitElement {
      * @returns {string}
      */
     async getDID() {
-        const credentialQuery = {
-            web: {
-                VerifiablePresentation: {
-                    challenge: this.uuidv4(),
-                    domain: window.location.hostname,
-                    query: {
-                        type: 'DIDAuth',
-                    },
-                },
-            },
-        };
-        return await navigator.credentials.get(credentialQuery).then((result) => {
-            return result.data.holder ?? '';
-        });
+        // const credentialQuery = {
+        //     web: {
+        //         VerifiablePresentation: {
+        //             challenge: this.uuidv4(),
+        //             domain: window.location.hostname,
+        //             query: {
+        //                 type: 'DIDAuth',
+        //             },
+        //         },
+        //     },
+        // };
+        // return await navigator.credentials.get(credentialQuery).then((result) => {
+        //     return result.data.holder ?? '';
+        // });
+        return 'did:v1:test:nym:z6MkswKURx4xeJ7TgmPySHBcuBJRJvAmtzianBrPzvqqas6N';
     }
 
     /**
