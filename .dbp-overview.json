@@ -11,7 +11,7 @@
   "blueprint": ["Educational Credentials"],
   "release_version": "0.1.0",
   "release_date": "2022-01-17",
-  "labs": "yes",
+  "labs": ["yes"],
   "link_repo": "https://gitlab.tugraz.at/dbp/educational-credentials/educred",
   "link_icon": "https://gitlab.tugraz.at/uploads/-/system/project/avatar/16923/diploma-and-graduate-cap.png?width=64",
   "link_demo": "https://dbp-demo.tugraz.at/apps/educred",
