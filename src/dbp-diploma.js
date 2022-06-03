@@ -76,11 +76,12 @@ export default class DbpDiploma extends DBPLitElement {
                 <span class="header">
                   <h3>${name}</h3>
                   <span>
+                      ${ (educationalLevel !== '') ? html`
                       <b>${educationalLevel}</b>
                       ${i18n.t('from')}
-                      ${validFrom.substr(0, 10)}
+                      ${validFrom.substr(0, 10)}` : html`<br>` }
                   </span>
-                  <span>id = ${id}</span>
+                  ${ (id !== '') ? html`<span>id = ${id}</span>` : '' } 
                 </span>
             </div>`;
     }

@@ -391,13 +391,13 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                                 </option>`)}
                         </select>
                     </div>
-                    <div class="diploma ${classMap({
-                        hidden: this.diplomas.length < 1,
-                    })}">
-                        <dbp-diploma diploma="${JSON.stringify(externDiploma)}" lang="${this.lang}"></dbp-diploma>
-                    </div>
                     <div class="vc-text">
                         <textarea name="text" id="vc-text" rows="12" wrap="soft" @change="${this.paste}"></textarea>
+                    </div>
+                    <div class="diploma ${classMap({
+                        hidden: false //this.diplomas.length < 1,
+                    })}">
+                        <dbp-diploma diploma="${JSON.stringify(externDiploma)}" lang="${this.lang}"></dbp-diploma>
                     </div>
                     <div class="btn">
                         <dbp-loading-button
