@@ -392,10 +392,10 @@ class DbpVerifyVc extends ScopedElementsMixin(DBPEducredLitElement) {
                         </select>
                     </div>
                     <div class="vc-text">
-                        <textarea name="text" id="vc-text" rows="12" wrap="soft" @change="${this.paste}"></textarea>
+                        <textarea name="text" id="vc-text" rows="12" wrap="soft" @input="${this.paste}"></textarea>
                     </div>
                     <div class="diploma ${classMap({
-                        hidden: false //this.diplomas.length < 1,
+                        hidden: this.diplomas.length < 1,
                     })}">
                         <dbp-diploma diploma="${JSON.stringify(externDiploma)}" lang="${this.lang}"></dbp-diploma>
                     </div>
