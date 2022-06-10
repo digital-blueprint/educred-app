@@ -1,6 +1,7 @@
 {
   "id": "ea9e1065-61b2-4e8d-a1ab-a260e060624b",
   "name": "Educred App",
+  "target_audience": ["development", "operations"],
   "description": "Export and import your educational credentials to/from a wallet.",
   "document_type": ["Software"],
   "content_type": ["Application"],
@@ -9,11 +10,12 @@
   "license": ["LGPL-2.1-only"],
   "used_programming_languages": ["JavaScript", "HTML"],
   "blueprint": ["Educational Credentials"],
-  "release_version": "0.1.0",
+  "release_version": "0.1.1",
   "release_date": "2022-01-17",
   "labs": ["yes"],
   "link_repo": "https://gitlab.tugraz.at/dbp/educational-credentials/educred",
   "link_icon": "https://gitlab.tugraz.at/uploads/-/system/project/avatar/16923/diploma-and-graduate-cap.png?width=64",
   "link_demo": "https://dbp-demo.tugraz.at/apps/educred",
-  "score": 0.71
+  "link_changelog": "https://gitlab.tugraz.at/dbp/educational-credentials/educred/-/blob/main/CHANGELOG.md"
+  "sort": 0.23
 }
