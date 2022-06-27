@@ -1,8 +1,16 @@
 # Educational Credentials Application
 
+
+
 [GitLab Repository](https://gitlab.tugraz.at/dbp/educred/educred) |
 [npmjs package](https://www.npmjs.com/package/@dbp-topics/educred) |
 [Unpkg CDN](https://unpkg.com/browse/@dbp-topics/educred/)
+[Educred Bundle](https://gitlab.tugraz.at/dbp/educational-credentials/relay-educationalcredentials-bundle) |
+
+## Prerequisites
+
+- You need the [API server](https://gitlab.tugraz.at/dbp/relay/dbp-relay-server-template) running
+- You need the [DbpRelayEducredBundle](https://gitlab.tugraz.at/dbp/educational-credentials/relay-educationalcredentials-bundle) for creating verifiable credentials for your users
 
 ## Local development
 
@@ -28,7 +36,7 @@ Jump to <https://localhost:8001> and you get the app, for any further interactio
 
 ### Install app
 
-If you want to install the DBP educred App in a new folder `educred-app` you can call:
+If you want to install the dbp educred app in a new folder `educred-app` you can call:
 
 ```bash
 npx @digital-blueprint/cli install-app educred educred-app
@@ -43,42 +51,61 @@ Note that you will need a Keycloak server along with a client id for the domain 
 
 ### Update app
 
-If you want to update the DBP educred App in the current folder you can call:
+If you want to update the dbp educred App in the current folder you can call:
 
 ```bash
 npx @digital-blueprint/cli update-app educred
 ```
 
+**Warning:** There may be issues when you run these commands as root user, best use a non-root user, like `www-data`.
+To do this you can for example open a shell with `runuser -u www-data -- bash`.
+
 ## Activities
+This app has the following activities:
+- `dbp-create-vc`
+- `dbp-verify-vc`
 
-### dbp-create-vc
+You can find the documentation of these activities in the [educred activities documentation](https://gitlab.tugraz.at/dbp/educational-credentials/educred/-/tree/main/src).
 
-Export any rewarded diploma from your local university as a verifiable credential.
+## Adapt app
 
-Note that you will need a Keycloak server along with a client id for the domain you are running this html on.
+### Functionality
+You can add multiple attributes to the `<dbp-educred>` tag.
 
-#### Attributes
+| attribute name | value | Link to description |
+|----------------|-------| ------------|
+| `provider-root` | Boolean | [app-shell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell#attributes) |
+| `lang`         | String | [language-select](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/language-select#attributes) | 
+| `entry-point-url` | String | [app-shell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell#attributes) |
+| `keycloak-config` | Object | [app-shell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell#attributes) |
+| `base-path` | String | [app-shell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell#attributes) |
+| `src` | String | [app-shell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell#attributes) |
+| `html-overrides` | String | [common](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/common#overriding-slots-in-nested-web-components) |
+| `themes` | Array | [theme-switcher](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/theme-switcher#themes-attribute) |
+| `darkModeThemeOverride` | String | [theme-switcher](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/theme-switcher#themes-attribute) |
 
-- `lang` (optional, default: `de`): set to `de` or `en` for German or English
-    - example `lang="de"`
-- `entry-point-url` (optional, default is the TU Graz entry point url): entry point url to access the api
-    - example `entry-point-url="https://api-dev.tugraz.at"`
-- `auth` object: you need to set that object property for the auth token
-    - example auth property: `{token: "THE_BEARER_TOKEN"}`
-    - note: most often this should be an attribute that is not set directly, but subscribed at a provider
 
-### dbp-verify-vc
+#### Mandatory attributes
 
-Import any rewarded diploma from another university at the local university and verify it.
+If you are not using the `provider-root` attribute to "terminate" all provider attributes
+you need to manually add these attributes so that the topic will work properly:
 
-Note that you will need a Keycloak server along with a client id for the domain you are running this html on.
+```html
+<dbp-educred
+    auth
+    requested-login-status
+    analytics-event
+>
+</dbp-educred>
+```
 
-#### Attributes
+### Design
 
-- `lang` (optional, default: `de`): set to `de` or `en` for German or English
-    - example `lang="de"`
-- `entry-point-url` (optional, default is the TU Graz entry point url): entry point url to access the api
-    - example `entry-point-url="https://api-dev.tugraz.at"`
-- `auth` object: you need to set that object property for the auth token
-    - example auth property: `{token: "THE_BEARER_TOKEN"}`
-    - note: most often this should be an attribute that is not set directly, but subscribed at a provider
+For frontend design customizations, such as logo, colors, font, favicon, and more, take a look at the [theming documentation](https://dbp-demo.tugraz.at/dev-guide/frontend/theming/).
+
+
+## "dbp-educred" slots
+
+These are common slots for the app-shell. You can find the documentation of these slots in the [app-shell documentation](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell).
+For the app specific slots take a look at the [educred activities](https://gitlab.tugraz.at/dbp/educational-credentials/educred/-/tree/main/src).
+
