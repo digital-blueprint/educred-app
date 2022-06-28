@@ -1,10 +1,8 @@
 # Educational Credentials Application
 
-
-
 [GitLab Repository](https://gitlab.tugraz.at/dbp/educred/educred) |
-[npmjs package](https://www.npmjs.com/package/@dbp-topics/educred) |
-[Unpkg CDN](https://unpkg.com/browse/@dbp-topics/educred/)
+<!-- [npmjs package](https://www.npmjs.com/package/@dbp-topics/educred) |
+[Unpkg CDN](https://unpkg.com/browse/@dbp-topics/educred/) -->
 [Educred Bundle](https://gitlab.tugraz.at/dbp/educational-credentials/relay-educationalcredentials-bundle) |
 
 ## Prerequisites

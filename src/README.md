@@ -3,9 +3,11 @@
 Here you can find the individual activities of the `educred` app. 
 If you want to use the whole app look at [educred](https://gitlab.tugraz.at/dbp/educational-credentials/educred).
 
-<!-- ## Usage of an activity
-TODO add description how to only use an activity alone here
+<--! ## Usage of an activity
+
+You can use every activity alone. Take a look at our examples [here](https://gitlab.tugraz.at/dbp/educational-credentials/educred/-/tree/main/examples).
 -->
+
 ## Activities
 
 ### Shared Attributes
