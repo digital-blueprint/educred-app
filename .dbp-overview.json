@@ -14,7 +14,7 @@
   "release_date": "2022-06-10",
   "labs": ["yes"],
   "link_repo": "https://gitlab.tugraz.at/dbp/educational-credentials/educred",
-  "link_icon": "https://gitlab.tugraz.at/uploads/-/system/project/avatar/16923/diploma-and-graduate-cap.png?width=64",
+  "link_icon": "https://gitlab.tugraz.at/uploads/-/system/group/avatar/4448/educred_appicon.png?width=64",
   "link_demo": "https://dbp-demo.tugraz.at/apps/educred",
   "link_changelog": "https://gitlab.tugraz.at/dbp/educational-credentials/educred/-/blob/main/CHANGELOG.md",
   "sort": 0.23
