@@ -9,7 +9,7 @@
   "contact_email": "eugen.neuber@tugraz.at",
   "license": ["LGPL-2.1-only"],
   "used_programming_languages": ["JavaScript", "HTML"],
-  "blueprint": ["Educational Credentials (DBP Diploma)"],
+  "blueprint": ["Educational Credentials (dbp diploma)"],
   "release_version": "0.1.1",
   "release_date": "2022-06-10",
   "labs": ["yes"],
