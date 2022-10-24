@@ -57,7 +57,7 @@
         "@tugraz/web-components": "^0.3.6",
         "@webcomponents/scoped-custom-element-registry": "^0.0.5",
         "credential-handler-polyfill": "^2.1.0",
-        "i18next": "^21.0.0",
+        "i18next": "^22.0.0",
         "lit": "^2.1.0",
         "mockdate": "^3.0.5"
     },
