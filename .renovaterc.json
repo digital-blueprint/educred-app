@@ -4,5 +4,6 @@
     "rangeStrategy": "update-lockfile",
     "composer": {
         "enabled": false
-    }
+    },
+    "enabled": false
 }
