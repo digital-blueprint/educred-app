@@ -21,13 +21,13 @@ cd educred
 git submodule update --init
 
 # install dependencies
-yarn install
+npm install
 
 # constantly build dist/bundle.js and run a local web-server on port 8001 
-yarn run watch
+npm run watch
 
 # run tests
-yarn test
+npm test
 ```
 
 Jump to <https://localhost:8001> and you get the app, for any further interaction you need to log in.

@@ -3,13 +3,13 @@ image: registry.gitlab.tugraz.at/dbp/educational-credentials/educred/main:v1
 cache:
   key: $CI_PROJECT_PATH
   paths:
-    - _yarn_cache
+    - _npm_cache
 
 before_script:
   - 'git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.tugraz.at/".insteadOf "git@gitlab.tugraz.at:"'
   - git submodule sync
   - git submodule update --init
-  - yarn config set cache-folder "$CI_PROJECT_DIR/_yarn_cache"
+  - npm config set cache "$CI_PROJECT_DIR/_npm_cache"
 
 stages:
   - test
@@ -18,16 +18,16 @@ stages:
 test:
   stage: test
   script:
-    - yarn install
-    - APP_ENV=development yarn run build
-    - yarn run test-full
+    - npm ci
+    - APP_ENV=development npm run build
+    - npm run test-full
 
 linting:
   stage: test
   allow_failure: true
   script:
-    - yarn install
-    - yarn run lint
+    - npm ci
+    - npm run lint
 
 deploy:
   stage: deploy
