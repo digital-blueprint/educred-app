@@ -42,7 +42,7 @@ npx @digital-blueprint/cli install-app educred educred-app
 
 Afterwards you can point your Apache web-server to `educred-app/public`.
 
-You can also use this app directly from the [Unpkg CDN](https://unpkg.com/browse/@dbp-topics/educred/)
+You can also use this app directly from the [Unpkg CDN](https://unpkg.com/browse/@digital-blueprint/educred-app/)
 for example like this: [dbp-educred/index.html](https://github.com/digital-blueprint/educred-app/tree/main/examples/dbp-educred/index.html)
 
 Note that you will need a Keycloak server along with a client id for the domain you are running this html on.
