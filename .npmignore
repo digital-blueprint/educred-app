@@ -6,5 +6,3 @@ rollup.config.js
 _cypress_cache
 scripts
 docker
-.gitlab
-.gitlab-ci

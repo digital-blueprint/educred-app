@@ -1,22 +1,20 @@
 # Educational Credentials Application
 
-[GitLab Repository](https://gitlab.tugraz.at/dbp/educred/educred) |
-<!-- [npmjs package](https://www.npmjs.com/package/@dbp-topics/educred) |
-[Unpkg CDN](https://unpkg.com/browse/@dbp-topics/educred/) -->
+[GitHub Repository](https://github.com/digital-blueprint/educred-app) |
 [Educred Bundle](https://gitlab.tugraz.at/dbp/educational-credentials/relay-educationalcredentials-bundle) |
 
 Export and import your educational credentials to/from the clipboard or a CHAPI wallet.
 
 ## Prerequisites
 
-- You need the [API server](https://gitlab.tugraz.at/dbp/relay/dbp-relay-server-template) running
+- You need the [API server](https://github.com/digital-blueprint/relay-server-template) running
 - You need the [DbpRelayEducredBundle](https://gitlab.tugraz.at/dbp/educational-credentials/relay-educationalcredentials-bundle) for creating verifiable credentials for your users
 
 ## Local development
 
 ```bash
 # get the source
-git clone git@gitlab.tugraz.at:dbp/educational-credentials/educred.git
+git clone https://github.com/digital-blueprint/educred-app
 cd educred
 git submodule update --init
 
@@ -45,7 +43,7 @@ npx @digital-blueprint/cli install-app educred educred-app
 Afterwards you can point your Apache web-server to `educred-app/public`.
 
 You can also use this app directly from the [Unpkg CDN](https://unpkg.com/browse/@dbp-topics/educred/)
-for example like this: [dbp-educred/index.html](https://gitlab.tugraz.at/dbp/educred/educred/-/tree/main/examples/dbp-educred/index.html)
+for example like this: [dbp-educred/index.html](https://github.com/digital-blueprint/educred-app/tree/main/examples/dbp-educred/index.html)
 
 Note that you will need a Keycloak server along with a client id for the domain you are running this html on.
 
@@ -65,7 +63,7 @@ This app has the following activities:
 - `dbp-create-vc`
 - `dbp-verify-vc`
 
-You can find the documentation of these activities in the [educred activities documentation](https://gitlab.tugraz.at/dbp/educational-credentials/educred/-/tree/main/src).
+You can find the documentation of these activities in the [educred activities documentation](https://github.com/digital-blueprint/educred-app/tree/main/src).
 
 ## Adapt app
 
@@ -74,15 +72,15 @@ You can add multiple attributes to the `<dbp-educred>` tag.
 
 | attribute name          | value   | Link to description                                                                                                                   |
 |-------------------------|---------|---------------------------------------------------------------------------------------------------------------------------------------|
-| `provider-root`         | Boolean | [app-shell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell#attributes)                          |
-| `lang`                  | String  | [language-select](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/language-select#attributes)              | 
-| `entry-point-url`       | String  | [app-shell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell#attributes)                          |
-| `keycloak-config`       | Object  | [app-shell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell#attributes)                          |
-| `base-path`             | String  | [app-shell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell#attributes)                          |
-| `src`                   | String  | [app-shell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell#attributes)                          |
-| `html-overrides`        | String  | [common](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/common#overriding-slots-in-nested-web-components) |
-| `themes`                | Array   | [theme-switcher](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/theme-switcher#themes-attribute)          |
-| `darkModeThemeOverride` | String  | [theme-switcher](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/theme-switcher#themes-attribute)          |
+| `provider-root`         | Boolean | [app-shell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes)                          |
+| `lang`                  | String  | [language-select](https://github.com/digital-blueprint/toolkit/tree/main/packages/language-select#attributes)              | 
+| `entry-point-url`       | String  | [app-shell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes)                          |
+| `keycloak-config`       | Object  | [app-shell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes)                          |
+| `base-path`             | String  | [app-shell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes)                          |
+| `src`                   | String  | [app-shell](https://github.com/digital-blueprint/toolkit/tree/main/packages//app-shell#attributes)                          |
+| `html-overrides`        | String  | [common](https://github.com/digital-blueprint/toolkit/tree/main/packages/common#overriding-slots-in-nested-web-components) |
+| `themes`                | Array   | [theme-switcher](https://github.com/digital-blueprint/toolkit/tree/main/packages/theme-switcher#themes-attribute)          |
+| `darkModeThemeOverride` | String  | [theme-switcher](https://github.com/digital-blueprint/toolkit/tree/main/packages/theme-switcher#themes-attribute)          |
 
 
 #### Mandatory attributes
@@ -106,6 +104,5 @@ For frontend design customizations, such as logo, colors, font, favicon, and mor
 
 ## "dbp-educred" slots
 
-These are common slots for the app-shell. You can find the documentation of these slots in the [app-shell documentation](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell).
-For the app specific slots take a look at the [educred activities](https://gitlab.tugraz.at/dbp/educational-credentials/educred/-/tree/main/src).
-
+These are common slots for the app-shell. You can find the documentation of these slots in the [app-shell documentation](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell).
+For the app specific slots take a look at the [educred activities](https://github.com/digital-blueprint/educred-app/tree/main/src).
