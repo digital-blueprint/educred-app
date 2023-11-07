@@ -79,17 +79,7 @@ class DbpCreateVc extends ScopedElementsMixin(DBPEducredLitElement) {
      * @returns {Array} list
      */
     parseDiplomas(response) {
-        let list = [];
-
-        let numTypes = parseInt(response['hydra:totalItems']);
-        if (isNaN(numTypes)) {
-            numTypes = 0;
-        }
-        for (let i = 0; i < numTypes; i++) {
-            list[i] = response['hydra:member'][i];
-        }
-
-        return list;
+        return response['hydra:member'];
     }
 
     /**
