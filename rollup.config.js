@@ -1,4 +1,3 @@
-import path from 'path';
 import url from 'url';
 import glob from 'glob';
 import resolve from '@rollup/plugin-node-resolve';
@@ -14,15 +13,15 @@ import del from 'rollup-plugin-delete';
 import emitEJS from 'rollup-plugin-emit-ejs';
 import {getBabelOutputPlugin} from '@rollup/plugin-babel';
 import appConfig from './app.config.js';
-import cp from 'child_process';
-//import util from 'util';
 import {
     getPackagePath,
     getBuildInfo,
     generateTLSConfig,
     getDistPath,
-} from './vendor/toolkit/rollup.utils.js';
+} from '@dbp-toolkit/dev-utils';
+import { createRequire } from "module";
 
+const require = createRequire(import.meta.url);
 const pkg = require('./package.json');
 const appEnv = typeof process.env.APP_ENV !== 'undefined' ? process.env.APP_ENV : 'local';
 const watch = process.env.ROLLUP_WATCH === 'true';
