@@ -5,6 +5,12 @@
 
 Export and import your educational credentials to/from the clipboard or a CHAPI wallet.
 
+## Screenshots
+
+![](./screenshot-1.png)
+
+![](./screenshot-2.png)
+
 ## Prerequisites
 
 - You need the [API server](https://github.com/digital-blueprint/relay-server-template) running
